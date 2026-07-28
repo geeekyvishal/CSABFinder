@@ -351,13 +351,12 @@ export function VacancyTable({
                       {showRound1 && (
                         <td className="py-3 px-4 whitespace-nowrap">
                           {cutoff && cutoff.r1 ? (
-                            <div className="text-xs">
-                              <span className="font-bold text-[#0071e3]">OR: {cutoff.r1.or.toLocaleString()}</span>
-                              <span className="text-gray-400 mx-1">—</span>
-                              <span className="font-bold text-slate-800">CR: {cutoff.r1.cr.toLocaleString()}</span>
+                            <div className="flex flex-col text-xs font-mono leading-snug">
+                              <span className="font-semibold text-[#0071e3]">OR: {cutoff.r1.or.toLocaleString()}</span>
+                              <span className="font-semibold text-[#1d1d1f]">CR: {cutoff.r1.cr.toLocaleString()}</span>
                             </div>
                           ) : (
-                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                            <span className="text-gray-300 italic text-xs">N/A</span>
                           )}
                         </td>
                       )}
@@ -366,13 +365,12 @@ export function VacancyTable({
                       {showRound2 && (
                         <td className="py-3 px-4 whitespace-nowrap">
                           {cutoff && cutoff.r2 ? (
-                            <div className="text-xs">
-                              <span className="font-bold text-indigo-600">OR: {cutoff.r2.or.toLocaleString()}</span>
-                              <span className="text-gray-400 mx-1">—</span>
-                              <span className="font-bold text-slate-800">CR: {cutoff.r2.cr.toLocaleString()}</span>
+                            <div className="flex flex-col text-xs font-mono leading-snug">
+                              <span className="font-semibold text-indigo-600">OR: {cutoff.r2.or.toLocaleString()}</span>
+                              <span className="font-semibold text-[#1d1d1f]">CR: {cutoff.r2.cr.toLocaleString()}</span>
                             </div>
                           ) : (
-                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                            <span className="text-gray-300 italic text-xs">N/A</span>
                           )}
                         </td>
                       )}
@@ -381,13 +379,12 @@ export function VacancyTable({
                       {showRound3 && (
                         <td className="py-3 px-4 whitespace-nowrap">
                           {cutoff && cutoff.r3 ? (
-                            <div className="text-xs">
-                              <span className="font-bold text-purple-600">OR: {cutoff.r3.or.toLocaleString()}</span>
-                              <span className="text-gray-400 mx-1">—</span>
-                              <span className="font-bold text-slate-800">CR: {cutoff.r3.cr.toLocaleString()}</span>
+                            <div className="flex flex-col text-xs font-mono leading-snug">
+                              <span className="font-semibold text-purple-600">OR: {cutoff.r3.or.toLocaleString()}</span>
+                              <span className="font-semibold text-[#1d1d1f]">CR: {cutoff.r3.cr.toLocaleString()}</span>
                             </div>
                           ) : (
-                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                            <span className="text-gray-300 italic text-xs">N/A</span>
                           )}
                         </td>
                       )}
