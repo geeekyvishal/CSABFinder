@@ -1,13 +1,21 @@
 import pandas as pd
 import json
 import re
+import os
 
 with open("src/data/vacancies.json", "r", encoding="utf-8") as f:
     vacancies = json.load(f)
 
-df1 = pd.read_csv("src/data/csv/csab_2025_r1.csv")
-df2 = pd.read_csv("src/data/csv/csab_2025_r2.csv")
-df3 = pd.read_csv("src/data/csv/csab_2025_r3.csv")
+# Use newer CSV data from src/data/newcsv folder
+CSV_DIR = "src/data/newcsv"
+if not os.path.exists(CSV_DIR):
+    CSV_DIR = "src/data/csv"
+
+print(f"Reading CSAB 2025 Cutoff data from {CSV_DIR}...")
+
+df1 = pd.read_csv(os.path.join(CSV_DIR, "csab_2025_r1.csv"))
+df2 = pd.read_csv(os.path.join(CSV_DIR, "csab_2025_r2.csv"))
+df3 = pd.read_csv(os.path.join(CSV_DIR, "csab_2025_r3.csv"))
 
 def clean(text):
     text = str(text).lower()
@@ -89,8 +97,8 @@ for v in vacancies:
             "maxCr": max(all_crs) if all_crs else None
         }
 
-print(f"Successfully processed 2025 CSAB R1, R2, R3 cutoff data!")
-print(f"Matched {matches} out of {len(vacancies)} vacancy items.")
+print(f"Successfully processed newer 2025 CSAB R1, R2, R3 cutoff data!")
+print(f"Matched {matches} out of {len(vacancies)} vacancy items ({round(matches/len(vacancies)*100, 1)}% match rate).")
 
 with open("src/data/cutoffs.json", "w", encoding="utf-8") as f:
     json.dump(matched_dict, f, indent=2)
