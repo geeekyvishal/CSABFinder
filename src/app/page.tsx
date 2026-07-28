@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import vacanciesData from "@/data/vacancies.json";
 import { VacancyItem, FilterState } from "@/types/vacancy";
 import { filterVacancies, calculateStats } from "@/utils/vacancyFilter";
@@ -10,26 +10,50 @@ import { StatsOverview } from "@/components/StatsOverview";
 import Link from "next/link";
 import { Sparkles, Wand2, ArrowRight, Flame, AlertTriangle } from "lucide-react";
 
+const INITIAL_FILTERS: FilterState = {
+  searchQuery: "",
+  homeState: "ALL",
+  category: "ALL",
+  seatPool: "ALL",
+  instituteType: "ALL",
+  instituteName: "ALL",
+  programName: "ALL",
+  quota: "ALL",
+  minVacancy: 1,
+  eligibilityFilter: "ALL",
+  showRound1: true,
+  showRound2: false,
+  showRound3: false,
+  userRank: "",
+  rankDelta: 10000,
+};
+
 export default function Home() {
   const allVacancies = vacanciesData as VacancyItem[];
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const [filters, setFilters] = useState<FilterState>({
-    searchQuery: "",
-    homeState: "ALL",
-    category: "ALL",
-    seatPool: "ALL",
-    instituteType: "ALL",
-    instituteName: "ALL",
-    programName: "ALL",
-    quota: "ALL",
-    minVacancy: 1,
-    eligibilityFilter: "ALL",
-    showRound1: true,
-    showRound2: false,
-    showRound3: false,
-    userRank: "",
-    rankDelta: 10000,
-  });
+  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
+
+  // Restore saved filters from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("csab_filters");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setFilters((prev) => ({ ...prev, ...parsed }));
+      } catch (e) {
+        // Fallback to initial filters
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save filters to localStorage whenever they change
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("csab_filters", JSON.stringify(filters));
+    }
+  }, [filters, isLoaded]);
 
   const filteredVacancies = useMemo(() => {
     return filterVacancies(allVacancies, filters);
@@ -40,7 +64,7 @@ export default function Home() {
   }, [filteredVacancies]);
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-[#1d1d1f] space-y-6 w-full">
       {/* Hero Section - Apple Style */}
       <div className="bg-white border border-black/[0.08] p-6 sm:p-10 rounded-3xl shadow-sm relative overflow-hidden text-center sm:text-left">
         <div className="max-w-3xl space-y-3.5">

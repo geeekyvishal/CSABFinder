@@ -21,6 +21,7 @@ interface FilterBarProps {
 
 export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps) {
   const handleReset = () => {
+    localStorage.removeItem("csab_filters");
     setFilters({
       searchQuery: "",
       homeState: "ALL",
