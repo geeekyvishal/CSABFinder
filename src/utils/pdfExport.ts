@@ -1,6 +1,6 @@
 import { VacancyItem } from "@/types/vacancy";
 
-export function exportToPDF(items: VacancyItem[], title = "CSAB 2024 Vacancy & Choice Preference Report", userState = "") {
+export function exportToPDF(items: VacancyItem[], title = "CSAB 2026 Vacancy & Choice Preference Report", userState = "") {
   const printWindow = window.open("", "_blank");
   if (!printWindow) {
     alert("Please allow popups to generate the PDF report.");
@@ -131,7 +131,7 @@ export function exportToPDF(items: VacancyItem[], title = "CSAB 2024 Vacancy & C
 
         <div class="header">
           <div>
-            <h1 class="brand">CSAB <span>Vacancies 2024</span></h1>
+            <h1 class="brand">CSAB <span>Vacancies 2026</span></h1>
             <p class="subtitle">Official Seat Allocation & Choice Locking Preference Report</p>
           </div>
           <div class="meta">
@@ -181,7 +181,7 @@ export function exportToPDF(items: VacancyItem[], title = "CSAB 2024 Vacancy & C
         </table>
 
         <div class="footer">
-          <div>CSAB Vacancies 2024 Platform — Verified Seat Intelligence Report</div>
+          <div>CSAB Vacancies 2026 Platform — Verified Seat Intelligence Report</div>
           <div>Page 1 of 1</div>
         </div>
 

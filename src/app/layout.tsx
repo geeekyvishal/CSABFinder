@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "CSAB Vacancies 2024 — Official Seat Intelligence Portal",
+  title: "CSAB Vacancies 2026 — Official Seat Intelligence Portal",
   description: "Find vacant seats in CSAB Special Rounds across 114 NITs, IIITs & GFTIs. Filter by Home State, Category, Seat Pool, and College preferences.",
 };
 

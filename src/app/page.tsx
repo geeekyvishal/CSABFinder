@@ -41,7 +41,7 @@ export default function Home() {
         <div className="max-w-2xl space-y-3.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0071e3]/10 text-[#0071e3] text-xs font-semibold">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Official CSAB 2024 Seat Intelligence</span>
+            <span>Official CSAB 2026 Seat Intelligence</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] leading-tight">

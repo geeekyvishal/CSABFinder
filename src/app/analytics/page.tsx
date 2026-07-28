@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
       <div className="bg-white border border-black/[0.08] p-6 rounded-3xl text-center shadow-sm">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0071e3] text-xs font-semibold mb-2">
           <BarChart2 className="h-3.5 w-3.5" />
-          <span>CSAB 2024 Data Analytics</span>
+          <span>CSAB 2026 Data Analytics</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-semibold text-[#1d1d1f] tracking-tight">
           Vacancy <span className="text-[#0071e3]">Visual Analytics</span>
@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
               <span>Top 10 Colleges with Highest Availability</span>
             </h3>
             <p className="text-xs text-[#86868b] mt-0.5">
-              Institutes offering the maximum total vacant seats in CSAB 2024
+              Institutes offering the maximum total vacant seats in CSAB 2026
             </p>
           </div>
         </div>

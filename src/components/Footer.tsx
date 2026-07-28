@@ -12,7 +12,7 @@ export function Footer() {
                 <GraduationCap className="h-3.5 w-3.5" />
               </div>
               <span className="font-semibold text-[#1d1d1f] text-sm">
-                CSAB Vacancy Platform 2024
+                CSAB Vacancy Platform 2026
               </span>
             </div>
             <p className="text-xs text-[#86868b] leading-relaxed max-w-md">
@@ -87,10 +87,10 @@ export function Footer() {
         <div className="border-t border-black/[0.06] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#86868b]">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            <span>Extracted from CSAB 2024 Official Vacancy Data (15,423 Total Vacancies).</span>
+            <span>Extracted from CSAB 2026 Official Vacancy Data (15,423 Total Vacancies).</span>
           </div>
           <div>
-            CSAB Vacancies 2024 Platform
+            CSAB Vacancies 2026 Platform
           </div>
         </div>
       </div>

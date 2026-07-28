@@ -69,7 +69,7 @@ export function Navbar() {
                 CSAB Vacancies
               </span>
               <span className="text-[10px] text-[#86868b] font-normal leading-tight">
-                2024 Portal
+                2026 Portal
               </span>
             </div>
           </Link>
