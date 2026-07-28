@@ -8,13 +8,11 @@ import {
   ArrowUpDown, 
   ChevronLeft, 
   ChevronRight, 
-  Building2, 
   MapPin, 
   GraduationCap,
-  Sparkles,
-  Download
+  Sparkles
 } from "lucide-react";
-import { exportToCSV } from "@/utils/csvExport";
+import { ExportMenu } from "@/components/ExportMenu";
 
 interface TableProps {
   vacancies: VacancyItem[];
@@ -28,7 +26,6 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
   const [sortField, setSortField] = useState<keyof VacancyItem>("vacancy");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // Sync shortlist with LocalStorage
   useEffect(() => {
     const saved = localStorage.getItem("csab_shortlist");
     if (saved) {
@@ -107,13 +104,7 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button
-            onClick={() => exportToCSV(sortedVacancies)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200/60"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Export CSV</span>
-          </button>
+          <ExportMenu items={sortedVacancies} userState={userHomeState} buttonText="Export Vacancies" />
 
           <select
             value={itemsPerPage}
@@ -192,12 +183,10 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                       key={item.id}
                       className="hover:bg-[#f5f5f7]/60 transition-colors group"
                     >
-                      {/* Index */}
                       <td className="py-3 px-4 text-center font-medium text-gray-400 text-xs">
                         {startIndex + idx + 1}
                       </td>
 
-                      {/* Institute Name & Code */}
                       <td className="py-3 px-4 max-w-xs sm:max-w-md">
                         <div className="flex items-start gap-2">
                           <div className={`mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold ${
@@ -230,7 +219,6 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                         </div>
                       </td>
 
-                      {/* Program Name & Code */}
                       <td className="py-3 px-4 max-w-xs">
                         <div className="font-medium text-[#1d1d1f] flex items-start gap-1.5">
                           <GraduationCap className="h-4 w-4 text-gray-400 shrink-0 mt-0.5" />
@@ -241,7 +229,6 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                         </div>
                       </td>
 
-                      {/* Quota */}
                       <td className="py-3 px-3">
                         <span className={`px-2 py-0.5 rounded-md text-xs font-semibold ${
                           isHS 
@@ -254,14 +241,12 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                         </span>
                       </td>
 
-                      {/* Category */}
                       <td className="py-3 px-3">
                         <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
                           {item.category}
                         </span>
                       </td>
 
-                      {/* Seat Pool */}
                       <td className="py-3 px-3">
                         <span className={`px-2 py-0.5 rounded-md text-[11px] font-medium ${
                           item.seatPool.includes("Female")
@@ -272,14 +257,12 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                         </span>
                       </td>
 
-                      {/* Vacancy Count */}
                       <td className="py-3 px-4 text-right">
                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-[#0071e3]/10 text-[#0071e3]">
                           {item.vacancy} {item.vacancy === 1 ? "Seat" : "Seats"}
                         </span>
                       </td>
 
-                      {/* Bookmark Toggle */}
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={() => toggleBookmark(item)}

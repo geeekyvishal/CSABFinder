@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { VacancyItem } from "@/types/vacancy";
-import { Bookmark, Download, Trash2, ArrowUp, ArrowDown, GraduationCap } from "lucide-react";
-import { exportToCSV } from "@/utils/csvExport";
+import { Bookmark, Trash2, ArrowUp, ArrowDown, GraduationCap } from "lucide-react";
+import { ExportMenu } from "@/components/ExportMenu";
 
 export default function ShortlistPage() {
   const [shortlist, setShortlist] = useState<VacancyItem[]>([]);
@@ -71,17 +71,15 @@ export default function ShortlistPage() {
 
         {shortlist.length > 0 && (
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => exportToCSV(shortlist, "My_CSAB_Choice_List.csv")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span>Export CSV</span>
-            </button>
+            <ExportMenu 
+              items={shortlist} 
+              filename="My_CSAB_Choice_List.csv"
+              buttonText="Export Shortlist" 
+            />
 
             <button
               onClick={clearAll}
-              className="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium text-rose-600 bg-rose-50 hover:bg-rose-100"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-rose-600 bg-rose-50 hover:bg-rose-100"
             >
               <Trash2 className="h-3.5 w-3.5" />
               <span>Clear All</span>

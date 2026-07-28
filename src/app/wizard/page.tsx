@@ -12,11 +12,10 @@ import {
   ArrowRight, 
   ArrowLeft, 
   CheckCircle2, 
-  Download,
   Sparkles
 } from "lucide-react";
 import { VacancyTable } from "@/components/VacancyTable";
-import { exportToCSV } from "@/utils/csvExport";
+import { ExportMenu } from "@/components/ExportMenu";
 
 export default function WizardPage() {
   const allVacancies = vacanciesData as VacancyItem[];
@@ -346,17 +345,16 @@ export default function WizardPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => exportToCSV(recommendedVacancies, `CSAB_Choice_List_${homeState}_${category}.csv`)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>Export CSV</span>
-              </button>
+              <ExportMenu 
+                items={recommendedVacancies} 
+                userState={homeState} 
+                filename={`CSAB_Choice_List_${homeState}_${category}.csv`}
+                buttonText="Export Choice List" 
+              />
 
               <button
                 onClick={() => setStep(1)}
-                className="flex items-center gap-1 px-3.5 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                className="flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
               >
                 <span>Edit Answers</span>
               </button>
