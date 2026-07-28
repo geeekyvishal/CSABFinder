@@ -10,6 +10,10 @@ export interface VacancyItem {
   vacancy: number;
   instituteType: 'NIT' | 'IIIT' | 'GFTI';
   instituteState: string;
+  or2025?: number;
+  cr2025?: number;
+  or2024?: number;
+  cr2024?: number;
 }
 
 export interface InstituteSummary {
@@ -31,7 +35,9 @@ export interface FilterState {
   programName: string;
   quota: string;
   minVacancy: number;
-  eligibilityFilter: 'ALL' | 'HS_ONLY' | 'OS_ONLY'; // Match state eligibility
+  eligibilityFilter: 'ALL' | 'HS_ONLY' | 'OS_ONLY';
+  showCutoff2025: boolean;
+  showCutoff2024: boolean;
 }
 
 export interface WizardState {

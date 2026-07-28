@@ -24,6 +24,8 @@ export default function Home() {
     quota: "ALL",
     minVacancy: 1,
     eligibilityFilter: "ALL",
+    showCutoff2025: false,
+    showCutoff2024: false,
   });
 
   const filteredVacancies = useMemo(() => {
@@ -96,6 +98,8 @@ export default function Home() {
       <VacancyTable
         vacancies={filteredVacancies}
         userHomeState={filters.homeState}
+        showCutoff2025={filters.showCutoff2025}
+        showCutoff2024={filters.showCutoff2024}
       />
     </div>
   );

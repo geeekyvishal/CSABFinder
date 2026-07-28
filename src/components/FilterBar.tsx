@@ -10,7 +10,9 @@ import {
   Building2, 
   RotateCcw, 
   SlidersHorizontal,
-  GraduationCap
+  GraduationCap,
+  TrendingUp,
+  Sliders
 } from "lucide-react";
 import institutesData from "@/data/institutes.json";
 
@@ -33,6 +35,8 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
       quota: "ALL",
       minVacancy: 1,
       eligibilityFilter: "ALL",
+      showCutoff2025: false,
+      showCutoff2024: false,
     });
   };
 
@@ -89,7 +93,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
 
       {/* Row 2: Category, Seat Pool, College Type, Quota */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
-        {/* Reservation Category */}
         <div>
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             Category
@@ -107,7 +110,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
           </select>
         </div>
 
-        {/* Seat Pool */}
         <div>
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             Seat Pool
@@ -125,7 +127,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
           </select>
         </div>
 
-        {/* Institute Type */}
         <div>
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             College Type
@@ -142,7 +143,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
           </select>
         </div>
 
-        {/* Quota */}
         <div>
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             Quota
@@ -161,9 +161,38 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
         </div>
       </div>
 
+      {/* Cutoff Columns Toggle Bar */}
+      <div className="p-3 bg-[#f5f5f7] rounded-xl border border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-[#0071e3]" />
+          <span className="font-semibold text-[#1d1d1f]">Previous Year Cutoffs Columns:</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-[#1d1d1f]">
+            <input
+              type="checkbox"
+              checked={filters.showCutoff2025}
+              onChange={(e) => setFilters((prev) => ({ ...prev, showCutoff2025: e.target.checked }))}
+              className="accent-[#0071e3] h-4 w-4 rounded cursor-pointer"
+            />
+            <span>Show 2025 Cutoff (OR - CR)</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-[#1d1d1f]">
+            <input
+              type="checkbox"
+              checked={filters.showCutoff2024}
+              onChange={(e) => setFilters((prev) => ({ ...prev, showCutoff2024: e.target.checked }))}
+              className="accent-[#0071e3] h-4 w-4 rounded cursor-pointer"
+            />
+            <span>Show 2024 Cutoff (OR - CR)</span>
+          </label>
+        </div>
+      </div>
+
       {/* Row 3: Branch filter, Specific College dropdown, Minimum seats slider, & Reset */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 pt-2 border-t border-black/[0.06]">
-        {/* Preferred Branch */}
         <div className="md:col-span-4">
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             Popular Branch
@@ -182,7 +211,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
           </select>
         </div>
 
-        {/* Specific Institute Search Select */}
         <div className="md:col-span-4">
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
             Specific College
@@ -201,7 +229,6 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
           </select>
         </div>
 
-        {/* Min Seats slider & Reset */}
         <div className="md:col-span-4 flex items-center justify-between gap-3">
           <div className="flex-1">
             <div className="flex justify-between items-center text-xs mb-1">

@@ -10,16 +10,34 @@ import {
   ChevronRight, 
   MapPin, 
   GraduationCap,
-  Sparkles
+  Sparkles,
+  TrendingUp
 } from "lucide-react";
 import { ExportMenu } from "@/components/ExportMenu";
+import cutoffsDataRaw from "@/data/cutoffs.json";
+
+interface CutoffEntry {
+  or2025?: number;
+  cr2025?: number;
+  or2024?: number;
+  cr2024?: number;
+}
+
+const cutoffsData = cutoffsDataRaw as Record<string, CutoffEntry>;
 
 interface TableProps {
   vacancies: VacancyItem[];
   userHomeState: string;
+  showCutoff2025?: boolean;
+  showCutoff2024?: boolean;
 }
 
-export function VacancyTable({ vacancies, userHomeState }: TableProps) {
+export function VacancyTable({ 
+  vacancies, 
+  userHomeState,
+  showCutoff2025 = false,
+  showCutoff2024 = false
+}: TableProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(25);
   const [shortlist, setShortlist] = useState<number[]>([]);
@@ -72,8 +90,8 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
   };
 
   const sortedVacancies = [...vacancies].sort((a, b) => {
-    let aVal = a[sortField];
-    let bVal = b[sortField];
+    let aVal = a[sortField] ?? "";
+    let bVal = b[sortField] ?? "";
     if (typeof aVal === "string") aVal = aVal.toLowerCase();
     if (typeof bVal === "string") bVal = bVal.toLowerCase();
 
@@ -89,6 +107,13 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
   useEffect(() => {
     setCurrentPage(1);
   }, [vacancies.length, itemsPerPage]);
+
+  const getCutoff = (item: VacancyItem) => {
+    const key = `${item.instituteCode}_${item.programCode}_${item.quota}_${item.category}_${item.seatPool}`;
+    return cutoffsData[key];
+  };
+
+  const totalColumns = 7 + (showCutoff2025 ? 1 : 0) + (showCutoff2024 ? 1 : 0);
 
   return (
     <div className="space-y-3.5">
@@ -147,6 +172,15 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                 <th className="py-3 px-3">Quota</th>
                 <th className="py-3 px-3">Category</th>
                 <th className="py-3 px-3">Seat Pool</th>
+
+                {showCutoff2025 && (
+                  <th className="py-3 px-4 text-[#0071e3] font-bold">2025 Cutoff (OR - CR)</th>
+                )}
+
+                {showCutoff2024 && (
+                  <th className="py-3 px-4 text-purple-600 font-bold">2024 Cutoff (OR - CR)</th>
+                )}
+
                 <th 
                   className="py-3 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors text-right"
                   onClick={() => handleSort("vacancy")}
@@ -163,7 +197,7 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
             <tbody className="divide-y divide-black/[0.04]">
               {currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-[#86868b]">
+                  <td colSpan={totalColumns} className="py-12 text-center text-[#86868b]">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Sparkles className="h-8 w-8 text-gray-300" />
                       <p className="font-semibold text-[#1d1d1f]">No vacant seats match your filter criteria.</p>
@@ -177,6 +211,8 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                   const isHS = item.quota === "HS";
                   const isOS = item.quota === "OS";
                   const isUserHomeCollege = userHomeState !== "ALL" && userHomeState && item.instituteState.toLowerCase() === userHomeState.toLowerCase();
+
+                  const cutoff = getCutoff(item);
 
                   return (
                     <tr 
@@ -256,6 +292,36 @@ export function VacancyTable({ vacancies, userHomeState }: TableProps) {
                           {item.seatPool.includes("Female") ? "Female-Only" : "Gender-Neutral"}
                         </span>
                       </td>
+
+                      {/* 2025 Cutoff Column */}
+                      {showCutoff2025 && (
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {cutoff && cutoff.or2025 && cutoff.cr2025 ? (
+                            <div className="text-xs">
+                              <span className="font-bold text-[#0071e3]">OR: {cutoff.or2025.toLocaleString()}</span>
+                              <span className="text-gray-400 mx-1">—</span>
+                              <span className="font-bold text-slate-700">CR: {cutoff.cr2025.toLocaleString()}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* 2024 Cutoff Column */}
+                      {showCutoff2024 && (
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {cutoff && cutoff.or2024 && cutoff.cr2024 ? (
+                            <div className="text-xs">
+                              <span className="font-bold text-purple-600">OR: {cutoff.or2024.toLocaleString()}</span>
+                              <span className="text-gray-400 mx-1">—</span>
+                              <span className="font-bold text-slate-700">CR: {cutoff.cr2024.toLocaleString()}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                          )}
+                        </td>
+                      )}
 
                       <td className="py-3 px-4 text-right">
                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-[#0071e3]/10 text-[#0071e3]">
