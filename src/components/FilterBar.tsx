@@ -106,7 +106,7 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
         {/* Rank Input */}
         <div className="md:col-span-5 relative">
           <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
-            Your Category CRL / Category Rank:
+            CRL Rank
           </label>
           <div className="relative">
             <input

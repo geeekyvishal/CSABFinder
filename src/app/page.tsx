@@ -8,7 +8,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { VacancyTable } from "@/components/VacancyTable";
 import { StatsOverview } from "@/components/StatsOverview";
 import Link from "next/link";
-import { Sparkles, Wand2, ArrowRight, Flame } from "lucide-react";
+import { Sparkles, Wand2, ArrowRight, Flame, AlertTriangle } from "lucide-react";
 
 export default function Home() {
   const allVacancies = vacanciesData as VacancyItem[];
@@ -89,6 +89,23 @@ export default function Home() {
         gftiSeats={stats.gftiSeats}
         homeStateSelected={filters.homeState}
       />
+
+      {/* Official Data Disclaimer Alert Banner */}
+      <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-start sm:items-center gap-2.5 text-xs text-amber-900 shadow-sm">
+        <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
+          <AlertTriangle className="h-4 w-4" />
+        </div>
+        <div className="flex-1">
+          <span className="font-bold text-amber-950">Notice to Candidates:</span>{" "}
+          <span className="text-[#515154]">
+            Data is provided for guidance. Minor discrepancies may exist. Please verify all details from the official CSAB portal (
+            <a href="https://csab.nic.in" target="_blank" rel="noreferrer" className="text-[#0071e3] font-semibold underline">
+              csab.nic.in
+            </a>
+          ). We are not responsible for choices locked.
+          </span>
+        </div>
+      </div>
 
       {/* Filter Bar */}
       <FilterBar

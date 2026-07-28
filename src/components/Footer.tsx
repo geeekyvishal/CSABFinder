@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, ExternalLink, ShieldCheck } from "lucide-react";
+import { GraduationCap, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
 
 export function Footer() {
   return (
@@ -81,6 +81,17 @@ export function Footer() {
                 </a>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Official Disclaimer Warning Box */}
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 mb-6 flex items-start gap-2.5 text-xs text-amber-900">
+          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-amber-950">Important Disclaimer & Data Accuracy Notice:</span>
+            <p className="text-[11px] text-amber-900/90 leading-relaxed">
+              This platform provides information extracted from official CSAB datasets for guidance purposes only. Minor data discrepancies may exist. Students and parents <strong>must verify all cutoffs, seat matrices, and eligibility criteria from the official CSAB website (<a href="https://csab.nic.in" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-[#0071e3]">csab.nic.in</a>)</strong> before making official choice locking decisions. We are not responsible or liable for any decisions made based on this website.
+            </p>
           </div>
         </div>
 
