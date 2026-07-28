@@ -1,0 +1,914 @@
+[
+  {
+    "code": 401,
+    "name": "Assam University, Silchar",
+    "type": "GFTI",
+    "state": "Assam",
+    "totalVacancies": 111,
+    "programCount": 3
+  },
+  {
+    "code": 301,
+    "name": "Atal Bihari Vajpayee Indian Institute of Information Technology & Management Gwalior",
+    "type": "IIIT",
+    "state": "Bihar",
+    "totalVacancies": 58,
+    "programCount": 5
+  },
+  {
+    "code": 440,
+    "name": "Birla Institute of Technology, Deoghar Off-Campus",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 260,
+    "programCount": 6
+  },
+  {
+    "code": 402,
+    "name": "Birla Institute of Technology, Mesra, Ranchi",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 678,
+    "programCount": 13
+  },
+  {
+    "code": 441,
+    "name": "Birla Institute of Technology, Patna Off-Campus",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 308,
+    "programCount": 7
+  },
+  {
+    "code": 444,
+    "name": "CU Jharkhand",
+    "type": "GFTI",
+    "state": "Jharkhand",
+    "totalVacancies": 59,
+    "programCount": 4
+  },
+  {
+    "code": 439,
+    "name": "Central University of Haryana",
+    "type": "GFTI",
+    "state": "Haryana",
+    "totalVacancies": 148,
+    "programCount": 4
+  },
+  {
+    "code": 437,
+    "name": "Central University of Jammu",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 215,
+    "programCount": 5
+  },
+  {
+    "code": 453,
+    "name": "Central University of Karnataka",
+    "type": "GFTI",
+    "state": "Karnataka",
+    "totalVacancies": 86,
+    "programCount": 4
+  },
+  {
+    "code": 460,
+    "name": "Central University of Punjab, Bathinda",
+    "type": "GFTI",
+    "state": "Punjab",
+    "totalVacancies": 43,
+    "programCount": 2
+  },
+  {
+    "code": 428,
+    "name": "Central University of Rajasthan, Rajasthan",
+    "type": "GFTI",
+    "state": "Rajasthan",
+    "totalVacancies": 55,
+    "programCount": 3
+  },
+  {
+    "code": 425,
+    "name": "Central institute of Technology Kokrajar, Assam",
+    "type": "GFTI",
+    "state": "Assam",
+    "totalVacancies": 18,
+    "programCount": 5
+  },
+  {
+    "code": 434,
+    "name": "Chhattisgarh Swami Vivekanada Technical University, Bhilai (CSVTU Bhilai)",
+    "type": "GFTI",
+    "state": "Chhattisgarh",
+    "totalVacancies": 107,
+    "programCount": 4
+  },
+  {
+    "code": 201,
+    "name": "Dr. B R Ambedkar National Institute of Technology, Jalandhar",
+    "type": "NIT",
+    "state": "Punjab",
+    "totalVacancies": 155,
+    "programCount": 15
+  },
+  {
+    "code": 443,
+    "name": "Gati Shakti Vishwavidyalaya, Vadodara",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 224,
+    "programCount": 7
+  },
+  {
+    "code": 427,
+    "name": "Ghani Khan Choudhary Institute of Engineering and Technology, Malda, West Bengal",
+    "type": "GFTI",
+    "state": "West Bengal",
+    "totalVacancies": 153,
+    "programCount": 5
+  },
+  {
+    "code": 403,
+    "name": "Gurukula Kangri Vishwavidyalaya, Haridwar",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 489,
+    "programCount": 5
+  },
+  {
+    "code": 313,
+    "name": "INDIAN INSTITUTE OF INFORMATION TECHNOLOGY SENAPATI MANIPUR",
+    "type": "IIIT",
+    "state": "Manipur",
+    "totalVacancies": 352,
+    "programCount": 6
+  },
+  {
+    "code": 404,
+    "name": "Indian Institute of Carpet Technology, Bhadohi",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 33,
+    "programCount": 1
+  },
+  {
+    "code": 232,
+    "name": "Indian Institute of Engineering Science and Technology, Shibpur",
+    "type": "NIT",
+    "state": "West Bengal",
+    "totalVacancies": 239,
+    "programCount": 14
+  },
+  {
+    "code": 433,
+    "name": "Indian Institute of Handloom Technology(IIHT), Varanasi",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 28,
+    "programCount": 1
+  },
+  {
+    "code": 442,
+    "name": "Indian Institute of Handloom Technology, Salem",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 25,
+    "programCount": 1
+  },
+  {
+    "code": 320,
+    "name": "Indian Institute of Information Technology (IIIT) Nagpur",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 171,
+    "programCount": 6
+  },
+  {
+    "code": 321,
+    "name": "Indian Institute of Information Technology (IIIT) Pune",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 181,
+    "programCount": 5
+  },
+  {
+    "code": 319,
+    "name": "Indian Institute of Information Technology (IIIT) Ranchi",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 113,
+    "programCount": 5
+  },
+  {
+    "code": 307,
+    "name": "Indian Institute of Information Technology (IIIT), Sri City, Chittoor",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 81,
+    "programCount": 3
+  },
+  {
+    "code": 302,
+    "name": "Indian Institute of Information Technology (IIIT)Kota, Rajasthan",
+    "type": "IIIT",
+    "state": "Rajasthan",
+    "totalVacancies": 72,
+    "programCount": 3
+  },
+  {
+    "code": 322,
+    "name": "Indian Institute of Information Technology Bhagalpur",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 208,
+    "programCount": 4
+  },
+  {
+    "code": 323,
+    "name": "Indian Institute of Information Technology Bhopal",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 325,
+    "programCount": 9
+  },
+  {
+    "code": 317,
+    "name": "Indian Institute of Information Technology Design & Manufacturing Kurnool, Andhra Pradesh",
+    "type": "IIIT",
+    "state": "Andhra Pradesh",
+    "totalVacancies": 107,
+    "programCount": 8
+  },
+  {
+    "code": 303,
+    "name": "Indian Institute of Information Technology Guwahati",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 105,
+    "programCount": 3
+  },
+  {
+    "code": 315,
+    "name": "Indian Institute of Information Technology Lucknow",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 50,
+    "programCount": 4
+  },
+  {
+    "code": 324,
+    "name": "Indian Institute of Information Technology Surat",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 98,
+    "programCount": 5
+  },
+  {
+    "code": 314,
+    "name": "Indian Institute of Information Technology Tiruchirappalli",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 120,
+    "programCount": 4
+  },
+  {
+    "code": 316,
+    "name": "Indian Institute of Information Technology(IIIT) Dharwad",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 224,
+    "programCount": 4
+  },
+  {
+    "code": 304,
+    "name": "Indian Institute of Information Technology(IIIT) Kalyani, West Bengal",
+    "type": "IIIT",
+    "state": "West Bengal",
+    "totalVacancies": 118,
+    "programCount": 4
+  },
+  {
+    "code": 305,
+    "name": "Indian Institute of Information Technology(IIIT) Kilohrad, Sonepat, Haryana",
+    "type": "IIIT",
+    "state": "Haryana",
+    "totalVacancies": 94,
+    "programCount": 4
+  },
+  {
+    "code": 318,
+    "name": "Indian Institute of Information Technology(IIIT) Kottayam",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 180,
+    "programCount": 5
+  },
+  {
+    "code": 306,
+    "name": "Indian Institute of Information Technology(IIIT) Una, Himachal Pradesh",
+    "type": "IIIT",
+    "state": "Himachal Pradesh",
+    "totalVacancies": 74,
+    "programCount": 4
+  },
+  {
+    "code": 308,
+    "name": "Indian Institute of Information Technology(IIIT), Vadodara, Gujrat",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 285,
+    "programCount": 7
+  },
+  {
+    "code": 325,
+    "name": "Indian Institute of Information Technology, Agartala",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 45,
+    "programCount": 1
+  },
+  {
+    "code": 309,
+    "name": "Indian Institute of Information Technology, Allahabad",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 78,
+    "programCount": 6
+  },
+  {
+    "code": 310,
+    "name": "Indian Institute of Information Technology, Design & Manufacturing, Kancheepuram",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 159,
+    "programCount": 11
+  },
+  {
+    "code": 327,
+    "name": "Indian Institute of Information Technology, Vadodara International Campus Diu (IIITVICD)",
+    "type": "IIIT",
+    "state": "Diu",
+    "totalVacancies": 122,
+    "programCount": 4
+  },
+  {
+    "code": 326,
+    "name": "Indian institute of information technology, Raichur, Karnataka",
+    "type": "IIIT",
+    "state": "Karnataka",
+    "totalVacancies": 95,
+    "programCount": 3
+  },
+  {
+    "code": 435,
+    "name": "Institute of Chemical Technology, Mumbai: Indian Oil Odisha Campus, Bhubaneswar",
+    "type": "GFTI",
+    "state": "Odisha",
+    "totalVacancies": 52,
+    "programCount": 1
+  },
+  {
+    "code": 438,
+    "name": "Institute of Engineering and Technology, Dr. H. S. Gour University. Sagar (A Central University)",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 309,
+    "programCount": 6
+  },
+  {
+    "code": 405,
+    "name": "Institute of Infrastructure, Technology, Research and Management-Ahmedabad",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 122,
+    "programCount": 4
+  },
+  {
+    "code": 424,
+    "name": "International Institute of Information Technology, Bhubaneswar",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 90,
+    "programCount": 4
+  },
+  {
+    "code": 420,
+    "name": "International Institute of Information Technology, Naya Raipur",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 20,
+    "programCount": 3
+  },
+  {
+    "code": 450,
+    "name": "Islamic University of Science and Technology Kashmir",
+    "type": "GFTI",
+    "state": "Kashmir",
+    "totalVacancies": 73,
+    "programCount": 2
+  },
+  {
+    "code": 407,
+    "name": "J.K. Institute of Applied Physics & Technology, Department of Electronics & Communication, University of Allahabad- Allahabad",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 51,
+    "programCount": 2
+  },
+  {
+    "code": 423,
+    "name": "Jawaharlal Nehru University, Delhi",
+    "type": "GFTI",
+    "state": "Delhi",
+    "totalVacancies": 34,
+    "programCount": 2
+  },
+  {
+    "code": 202,
+    "name": "Malaviya National Institute of Technology Jaipur",
+    "type": "NIT",
+    "state": "Rajasthan",
+    "totalVacancies": 97,
+    "programCount": 11
+  },
+  {
+    "code": 203,
+    "name": "Maulana Azad National Institute of Technology Bhopal",
+    "type": "NIT",
+    "state": "Madhya Pradesh",
+    "totalVacancies": 148,
+    "programCount": 13
+  },
+  {
+    "code": 411,
+    "name": "Mizoram University, Aizawl",
+    "type": "GFTI",
+    "state": "Mizoram",
+    "totalVacancies": 70,
+    "programCount": 6
+  },
+  {
+    "code": 204,
+    "name": "Motilal Nehru National Institute of Technology Allahabad",
+    "type": "NIT",
+    "state": "Uttar Pradesh",
+    "totalVacancies": 116,
+    "programCount": 10
+  },
+  {
+    "code": 409,
+    "name": "National Institute of Advanced Manufacturing Technology, Ranchi",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 112,
+    "programCount": 4
+  },
+  {
+    "code": 454,
+    "name": "National Institute of Electronics and Information Technology, Agartala",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 44,
+    "programCount": 1
+  },
+  {
+    "code": 455,
+    "name": "National Institute of Electronics and Information Technology, Aizawl",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 51,
+    "programCount": 2
+  },
+  {
+    "code": 447,
+    "name": "National Institute of Electronics and Information Technology, Ajmer (Rajasthan)",
+    "type": "IIIT",
+    "state": "Rajasthan",
+    "totalVacancies": 43,
+    "programCount": 1
+  },
+  {
+    "code": 408,
+    "name": "National Institute of Electronics and Information Technology, Aurangabad (Maharashtra)",
+    "type": "IIIT",
+    "state": "Maharashtra",
+    "totalVacancies": 78,
+    "programCount": 2
+  },
+  {
+    "code": 457,
+    "name": "National Institute of Electronics and Information Technology, Calicut",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 18,
+    "programCount": 1
+  },
+  {
+    "code": 448,
+    "name": "National Institute of Electronics and Information Technology, Gorakhpur (UP)",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 84,
+    "programCount": 2
+  },
+  {
+    "code": 456,
+    "name": "National Institute of Electronics and Information Technology, Imphal",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 47,
+    "programCount": 1
+  },
+  {
+    "code": 458,
+    "name": "National Institute of Electronics and Information Technology, Kohima",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 21,
+    "programCount": 1
+  },
+  {
+    "code": 446,
+    "name": "National Institute of Electronics and Information Technology, Patna (Bihar)",
+    "type": "IIIT",
+    "state": "Bihar",
+    "totalVacancies": 41,
+    "programCount": 1
+  },
+  {
+    "code": 445,
+    "name": "National Institute of Electronics and Information Technology, Ropar (Punjab)",
+    "type": "IIIT",
+    "state": "Punjab",
+    "totalVacancies": 85,
+    "programCount": 2
+  },
+  {
+    "code": 459,
+    "name": "National Institute of Electronics and Information Technology, Srinagar",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 47,
+    "programCount": 1
+  },
+  {
+    "code": 430,
+    "name": "National Institute of Food Technology Entrepreneurship and Management, Kundli",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 65,
+    "programCount": 1
+  },
+  {
+    "code": 431,
+    "name": "National Institute of Food Technology Entrepreneurship and Management, Thanjavur",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 68,
+    "programCount": 1
+  },
+  {
+    "code": 452,
+    "name": "National Institute of Technical Teachers Training and Research Bhopal",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 236,
+    "programCount": 7
+  },
+  {
+    "code": 205,
+    "name": "National Institute of Technology Agartala",
+    "type": "NIT",
+    "state": "Tripura",
+    "totalVacancies": 305,
+    "programCount": 14
+  },
+  {
+    "code": 218,
+    "name": "National Institute of Technology Arunachal Pradesh",
+    "type": "NIT",
+    "state": "Arunachal Pradesh",
+    "totalVacancies": 109,
+    "programCount": 6
+  },
+  {
+    "code": 206,
+    "name": "National Institute of Technology Calicut",
+    "type": "NIT",
+    "state": "Kerala",
+    "totalVacancies": 283,
+    "programCount": 13
+  },
+  {
+    "code": 207,
+    "name": "National Institute of Technology Delhi",
+    "type": "NIT",
+    "state": "Delhi",
+    "totalVacancies": 126,
+    "programCount": 8
+  },
+  {
+    "code": 208,
+    "name": "National Institute of Technology Durgapur",
+    "type": "NIT",
+    "state": "West Bengal",
+    "totalVacancies": 219,
+    "programCount": 12
+  },
+  {
+    "code": 209,
+    "name": "National Institute of Technology Goa",
+    "type": "NIT",
+    "state": "Goa",
+    "totalVacancies": 58,
+    "programCount": 5
+  },
+  {
+    "code": 210,
+    "name": "National Institute of Technology Hamirpur",
+    "type": "NIT",
+    "state": "Himachal Pradesh",
+    "totalVacancies": 130,
+    "programCount": 12
+  },
+  {
+    "code": 211,
+    "name": "National Institute of Technology Karnataka, Surathkal",
+    "type": "NIT",
+    "state": "Karnataka",
+    "totalVacancies": 164,
+    "programCount": 11
+  },
+  {
+    "code": 212,
+    "name": "National Institute of Technology Meghalaya",
+    "type": "NIT",
+    "state": "Meghalaya",
+    "totalVacancies": 45,
+    "programCount": 5
+  },
+  {
+    "code": 213,
+    "name": "National Institute of Technology Nagaland",
+    "type": "NIT",
+    "state": "Nagaland",
+    "totalVacancies": 76,
+    "programCount": 6
+  },
+  {
+    "code": 214,
+    "name": "National Institute of Technology Patna",
+    "type": "NIT",
+    "state": "Bihar",
+    "totalVacancies": 133,
+    "programCount": 18
+  },
+  {
+    "code": 215,
+    "name": "National Institute of Technology Puducherry",
+    "type": "NIT",
+    "state": "Puducherry",
+    "totalVacancies": 104,
+    "programCount": 5
+  },
+  {
+    "code": 216,
+    "name": "National Institute of Technology Raipur",
+    "type": "NIT",
+    "state": "Chhattisgarh",
+    "totalVacancies": 242,
+    "programCount": 12
+  },
+  {
+    "code": 217,
+    "name": "National Institute of Technology Sikkim",
+    "type": "NIT",
+    "state": "Sikkim",
+    "totalVacancies": 44,
+    "programCount": 6
+  },
+  {
+    "code": 231,
+    "name": "National Institute of Technology, Andhra Pradesh",
+    "type": "NIT",
+    "state": "Andhra Pradesh",
+    "totalVacancies": 110,
+    "programCount": 8
+  },
+  {
+    "code": 219,
+    "name": "National Institute of Technology, Jamshedpur",
+    "type": "NIT",
+    "state": "Jharkhand",
+    "totalVacancies": 63,
+    "programCount": 7
+  },
+  {
+    "code": 220,
+    "name": "National Institute of Technology, Kurukshetra",
+    "type": "NIT",
+    "state": "Haryana",
+    "totalVacancies": 237,
+    "programCount": 20
+  },
+  {
+    "code": 221,
+    "name": "National Institute of Technology, Manipur",
+    "type": "NIT",
+    "state": "Manipur",
+    "totalVacancies": 104,
+    "programCount": 10
+  },
+  {
+    "code": 222,
+    "name": "National Institute of Technology, Mizoram",
+    "type": "NIT",
+    "state": "Mizoram",
+    "totalVacancies": 105,
+    "programCount": 7
+  },
+  {
+    "code": 223,
+    "name": "National Institute of Technology, Rourkela",
+    "type": "NIT",
+    "state": "Odisha",
+    "totalVacancies": 188,
+    "programCount": 23
+  },
+  {
+    "code": 224,
+    "name": "National Institute of Technology, Silchar",
+    "type": "NIT",
+    "state": "Assam",
+    "totalVacancies": 153,
+    "programCount": 6
+  },
+  {
+    "code": 225,
+    "name": "National Institute of Technology, Srinagar",
+    "type": "NIT",
+    "state": "Jammu and Kashmir",
+    "totalVacancies": 255,
+    "programCount": 8
+  },
+  {
+    "code": 226,
+    "name": "National Institute of Technology, Tiruchirappalli",
+    "type": "NIT",
+    "state": "Tamil Nadu",
+    "totalVacancies": 138,
+    "programCount": 10
+  },
+  {
+    "code": 227,
+    "name": "National Institute of Technology, Uttarakhand",
+    "type": "NIT",
+    "state": "Uttarakhand",
+    "totalVacancies": 52,
+    "programCount": 5
+  },
+  {
+    "code": 228,
+    "name": "National Institute of Technology, Warangal",
+    "type": "NIT",
+    "state": "Telangana",
+    "totalVacancies": 151,
+    "programCount": 16
+  },
+  {
+    "code": 432,
+    "name": "North Eastern Regional Institute of Science and Technology, Nirjuli-791109 (Itanagar),Arunachal Pradesh",
+    "type": "GFTI",
+    "state": "Arunachal Pradesh",
+    "totalVacancies": 13,
+    "programCount": 6
+  },
+  {
+    "code": 436,
+    "name": "North-Eastern Hill University, Shillong",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 59,
+    "programCount": 4
+  },
+  {
+    "code": 311,
+    "name": "Pt. Dwarka Prasad Mishra Indian Institute of Information Technology, Design & Manufacture Jabalpur",
+    "type": "IIIT",
+    "state": "All India",
+    "totalVacancies": 113,
+    "programCount": 4
+  },
+  {
+    "code": 426,
+    "name": "Puducherry Technological University, Puducherry",
+    "type": "GFTI",
+    "state": "Puducherry",
+    "totalVacancies": 193,
+    "programCount": 10
+  },
+  {
+    "code": 422,
+    "name": "Punjab Engineering College, Chandigarh",
+    "type": "GFTI",
+    "state": "Punjab",
+    "totalVacancies": 220,
+    "programCount": 12
+  },
+  {
+    "code": 449,
+    "name": "Rajiv Gandhi National Aviation University, Fursatganj, Amethi (UP)",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 129,
+    "programCount": 3
+  },
+  {
+    "code": 410,
+    "name": "Sant Longowal Institute of Engineering and Technology",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 447,
+    "programCount": 16
+  },
+  {
+    "code": 229,
+    "name": "Sardar Vallabhbhai National Institute of Technology, Surat",
+    "type": "NIT",
+    "state": "Gujarat",
+    "totalVacancies": 294,
+    "programCount": 15
+  },
+  {
+    "code": 412,
+    "name": "School of Engineering, Tezpur University, Napaam, Tezpur",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 88,
+    "programCount": 13
+  },
+  {
+    "code": 413,
+    "name": "School of Planning & Architecture, Bhopal",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 31,
+    "programCount": 2
+  },
+  {
+    "code": 414,
+    "name": "School of Planning & Architecture, New Delhi",
+    "type": "GFTI",
+    "state": "Delhi",
+    "totalVacancies": 33,
+    "programCount": 2
+  },
+  {
+    "code": 415,
+    "name": "School of Planning & Architecture: Vijayawada",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 26,
+    "programCount": 2
+  },
+  {
+    "code": 406,
+    "name": "School of Studies of Engineering and Technology, Guru Ghasidas Vishwavidyalaya, Bilaspur",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 493,
+    "programCount": 10
+  },
+  {
+    "code": 451,
+    "name": "Shri G. S. Institute of Technology and Science Indore",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 28,
+    "programCount": 8
+  },
+  {
+    "code": 416,
+    "name": "Shri Mata Vaishno Devi University, Katra, Jammu & Kashmir",
+    "type": "GFTI",
+    "state": "Kashmir",
+    "totalVacancies": 241,
+    "programCount": 11
+  },
+  {
+    "code": 421,
+    "name": "University of Hyderabad",
+    "type": "GFTI",
+    "state": "All India",
+    "totalVacancies": 43,
+    "programCount": 2
+  },
+  {
+    "code": 230,
+    "name": "Visvesvaraya National Institute of Technology, Nagpur",
+    "type": "NIT",
+    "state": "Maharashtra",
+    "totalVacancies": 207,
+    "programCount": 14
+  }
+]
