@@ -1,6 +1,6 @@
 "use client";
 
-import { VacancyItem } from "@/types/vacancy";
+import { VacancyItem, CutoffData } from "@/types/vacancy";
 import { useState, useEffect } from "react";
 import { 
   Bookmark, 
@@ -11,38 +11,41 @@ import {
   MapPin, 
   GraduationCap,
   Sparkles,
-  TrendingUp
+  CheckCircle,
+  AlertCircle,
+  XCircle
 } from "lucide-react";
 import { ExportMenu } from "@/components/ExportMenu";
 import cutoffsDataRaw from "@/data/cutoffs.json";
 
-interface CutoffEntry {
-  or2025?: number;
-  cr2025?: number;
-  or2024?: number;
-  cr2024?: number;
-}
-
-const cutoffsData = cutoffsDataRaw as Record<string, CutoffEntry>;
+const cutoffsData = cutoffsDataRaw as Record<string, CutoffData>;
 
 interface TableProps {
   vacancies: VacancyItem[];
   userHomeState: string;
-  showCutoff2025?: boolean;
-  showCutoff2024?: boolean;
+  showRound1?: boolean;
+  showRound2?: boolean;
+  showRound3?: boolean;
+  userRank?: string;
+  rankDelta?: number;
 }
 
 export function VacancyTable({ 
   vacancies, 
   userHomeState,
-  showCutoff2025 = false,
-  showCutoff2024 = false
+  showRound1 = true,
+  showRound2 = false,
+  showRound3 = false,
+  userRank = "",
+  rankDelta = 10000
 }: TableProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(25);
   const [shortlist, setShortlist] = useState<number[]>([]);
   const [sortField, setSortField] = useState<keyof VacancyItem>("vacancy");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const numericRank = userRank ? Number(userRank) : null;
 
   useEffect(() => {
     const saved = localStorage.getItem("csab_shortlist");
@@ -89,6 +92,25 @@ export function VacancyTable({
     }
   };
 
+  const getCutoff = (item: VacancyItem): CutoffData | undefined => {
+    const key = `${item.instituteCode}_${item.programCode}_${item.quota}_${item.category}_${item.seatPool}`;
+    return cutoffsData[key];
+  };
+
+  // Rank Chance Calculation (Worst case of all 2025 rounds = maxCr)
+  const getRankChance = (cutoff?: CutoffData) => {
+    if (!numericRank || !cutoff || !cutoff.maxCr) return null;
+    const maxCr = cutoff.maxCr;
+
+    if (numericRank <= maxCr) {
+      return { level: "HIGH", label: "High Chance", color: "emerald" };
+    }
+    if (numericRank <= maxCr + rankDelta) {
+      return { level: "MODERATE", label: "Moderate Chance", color: "amber" };
+    }
+    return { level: "LOW", label: "Low Chance", color: "rose" };
+  };
+
   const sortedVacancies = [...vacancies].sort((a, b) => {
     let aVal = a[sortField] ?? "";
     let bVal = b[sortField] ?? "";
@@ -108,28 +130,28 @@ export function VacancyTable({
     setCurrentPage(1);
   }, [vacancies.length, itemsPerPage]);
 
-  const getCutoff = (item: VacancyItem) => {
-    const key = `${item.instituteCode}_${item.programCode}_${item.quota}_${item.category}_${item.seatPool}`;
-    return cutoffsData[key];
-  };
-
-  const totalColumns = 7 + (showCutoff2025 ? 1 : 0) + (showCutoff2024 ? 1 : 0);
+  const totalColumns = 7 + (showRound1 ? 1 : 0) + (showRound2 ? 1 : 0) + (showRound3 ? 1 : 0) + (numericRank ? 1 : 0);
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-3.5 w-full">
       {/* Table Header Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-black/[0.08] shadow-sm">
-        <div className="text-xs text-[#515154] font-medium flex items-center gap-2">
+        <div className="text-xs text-[#515154] font-medium flex items-center gap-2 flex-wrap">
           <span>Showing <strong className="text-[#0071e3] font-semibold">{sortedVacancies.length.toLocaleString()}</strong> vacant options</span>
           {userHomeState && userHomeState !== "ALL" && (
             <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#0071e3]/10 text-[#0071e3] font-medium">
               State: {userHomeState}
             </span>
           )}
+          {numericRank && (
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-300">
+              Rank: {numericRank.toLocaleString()} (Buffer: ±{rankDelta.toLocaleString()})
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <ExportMenu items={sortedVacancies} userState={userHomeState} buttonText="Export Vacancies" />
+          <ExportMenu items={sortedVacancies} userState={userHomeState} buttonText="Export Options" />
 
           <select
             value={itemsPerPage}
@@ -144,15 +166,15 @@ export function VacancyTable({
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="bg-white rounded-2xl border border-black/[0.08] shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Main Full-Width Table */}
+      <div className="bg-white rounded-2xl border border-black/[0.08] shadow-sm overflow-hidden w-full">
+        <div className="overflow-x-auto w-full">
           <table className="w-full text-left text-xs sm:text-sm border-collapse">
             <thead>
               <tr className="bg-[#fafafa] text-[#86868b] uppercase tracking-wider font-semibold border-b border-black/[0.06] text-[11px]">
-                <th className="py-3 px-4 w-12 text-center">#</th>
+                <th className="py-3.5 px-4 w-12 text-center">#</th>
                 <th 
-                  className="py-3 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors"
                   onClick={() => handleSort("instituteName")}
                 >
                   <div className="flex items-center gap-1">
@@ -161,7 +183,7 @@ export function VacancyTable({
                   </div>
                 </th>
                 <th 
-                  className="py-3 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors"
                   onClick={() => handleSort("programName")}
                 >
                   <div className="flex items-center gap-1">
@@ -169,20 +191,13 @@ export function VacancyTable({
                     <ArrowUpDown className="h-3 w-3 text-gray-400" />
                   </div>
                 </th>
-                <th className="py-3 px-3">Quota</th>
-                <th className="py-3 px-3">Category</th>
-                <th className="py-3 px-3">Seat Pool</th>
+                <th className="py-3.5 px-3">Quota</th>
+                <th className="py-3.5 px-3">Category</th>
+                <th className="py-3.5 px-3">Seat Pool</th>
 
-                {showCutoff2025 && (
-                  <th className="py-3 px-4 text-[#0071e3] font-bold">2025 Cutoff (OR - CR)</th>
-                )}
-
-                {showCutoff2024 && (
-                  <th className="py-3 px-4 text-purple-600 font-bold">2024 Cutoff (OR - CR)</th>
-                )}
-
+                {/* Vacant Seats */}
                 <th 
-                  className="py-3 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors text-right"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#1d1d1f] transition-colors text-right"
                   onClick={() => handleSort("vacancy")}
                 >
                   <div className="flex items-center gap-1 justify-end">
@@ -190,7 +205,26 @@ export function VacancyTable({
                     <ArrowUpDown className="h-3 w-3 text-[#0071e3]" />
                   </div>
                 </th>
-                <th className="py-3 px-4 text-center">Bookmark</th>
+
+                {/* Cutoff Columns AFTER Vacant Seats */}
+                {showRound1 && (
+                  <th className="py-3.5 px-4 text-[#0071e3] font-bold whitespace-nowrap">2025 Round 1 Cutoff</th>
+                )}
+
+                {showRound2 && (
+                  <th className="py-3.5 px-4 text-indigo-600 font-bold whitespace-nowrap">2025 Round 2 Cutoff</th>
+                )}
+
+                {showRound3 && (
+                  <th className="py-3.5 px-4 text-purple-600 font-bold whitespace-nowrap">2025 Round 3 Cutoff</th>
+                )}
+
+                {/* Rank Admission Chance Column */}
+                {numericRank && (
+                  <th className="py-3.5 px-4 text-center font-bold text-gray-700 whitespace-nowrap">Admission Chance</th>
+                )}
+
+                <th className="py-3.5 px-4 text-center">Bookmark</th>
               </tr>
             </thead>
 
@@ -201,7 +235,7 @@ export function VacancyTable({
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Sparkles className="h-8 w-8 text-gray-300" />
                       <p className="font-semibold text-[#1d1d1f]">No vacant seats match your filter criteria.</p>
-                      <p className="text-xs text-[#86868b]">Try adjusting State of Eligibility or Category filters.</p>
+                      <p className="text-xs text-[#86868b]">Try adjusting State of Eligibility, Rank Buffer, or Category filters.</p>
                     </div>
                   </td>
                 </tr>
@@ -213,17 +247,30 @@ export function VacancyTable({
                   const isUserHomeCollege = userHomeState !== "ALL" && userHomeState && item.instituteState.toLowerCase() === userHomeState.toLowerCase();
 
                   const cutoff = getCutoff(item);
+                  const chance = getRankChance(cutoff);
+
+                  // Row highlight styling if Rank entered
+                  let rowBgClass = "hover:bg-[#f5f5f7]/60";
+                  if (chance) {
+                    if (chance.level === "HIGH") {
+                      rowBgClass = "bg-emerald-50/40 hover:bg-emerald-50/70 border-l-4 border-l-emerald-500";
+                    } else if (chance.level === "MODERATE") {
+                      rowBgClass = "bg-amber-50/40 hover:bg-amber-50/70 border-l-4 border-l-amber-500";
+                    } else {
+                      rowBgClass = "bg-[#f5f5f7]/40 hover:bg-gray-100/60";
+                    }
+                  }
 
                   return (
                     <tr 
                       key={item.id}
-                      className="hover:bg-[#f5f5f7]/60 transition-colors group"
+                      className={`${rowBgClass} transition-colors group`}
                     >
                       <td className="py-3 px-4 text-center font-medium text-gray-400 text-xs">
                         {startIndex + idx + 1}
                       </td>
 
-                      <td className="py-3 px-4 max-w-xs sm:max-w-md">
+                      <td className="py-3 px-4 max-w-sm sm:max-w-md">
                         <div className="flex items-start gap-2">
                           <div className={`mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold ${
                             item.instituteType === "NIT" 
@@ -293,41 +340,79 @@ export function VacancyTable({
                         </span>
                       </td>
 
-                      {/* 2025 Cutoff Column */}
-                      {showCutoff2025 && (
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          {cutoff && cutoff.or2025 && cutoff.cr2025 ? (
-                            <div className="text-xs">
-                              <span className="font-bold text-[#0071e3]">OR: {cutoff.or2025.toLocaleString()}</span>
-                              <span className="text-gray-400 mx-1">—</span>
-                              <span className="font-bold text-slate-700">CR: {cutoff.cr2025.toLocaleString()}</span>
-                            </div>
-                          ) : (
-                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
-                          )}
-                        </td>
-                      )}
-
-                      {/* 2024 Cutoff Column */}
-                      {showCutoff2024 && (
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          {cutoff && cutoff.or2024 && cutoff.cr2024 ? (
-                            <div className="text-xs">
-                              <span className="font-bold text-purple-600">OR: {cutoff.or2024.toLocaleString()}</span>
-                              <span className="text-gray-400 mx-1">—</span>
-                              <span className="font-bold text-slate-700">CR: {cutoff.cr2024.toLocaleString()}</span>
-                            </div>
-                          ) : (
-                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
-                          )}
-                        </td>
-                      )}
-
+                      {/* Vacant Seats Column */}
                       <td className="py-3 px-4 text-right">
                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-[#0071e3]/10 text-[#0071e3]">
                           {item.vacancy} {item.vacancy === 1 ? "Seat" : "Seats"}
                         </span>
                       </td>
+
+                      {/* 2025 Round 1 Cutoff Column */}
+                      {showRound1 && (
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {cutoff && cutoff.r1 ? (
+                            <div className="text-xs">
+                              <span className="font-bold text-[#0071e3]">OR: {cutoff.r1.or.toLocaleString()}</span>
+                              <span className="text-gray-400 mx-1">—</span>
+                              <span className="font-bold text-slate-800">CR: {cutoff.r1.cr.toLocaleString()}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* 2025 Round 2 Cutoff Column */}
+                      {showRound2 && (
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {cutoff && cutoff.r2 ? (
+                            <div className="text-xs">
+                              <span className="font-bold text-indigo-600">OR: {cutoff.r2.or.toLocaleString()}</span>
+                              <span className="text-gray-400 mx-1">—</span>
+                              <span className="font-bold text-slate-800">CR: {cutoff.r2.cr.toLocaleString()}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* 2025 Round 3 Cutoff Column */}
+                      {showRound3 && (
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {cutoff && cutoff.r3 ? (
+                            <div className="text-xs">
+                              <span className="font-bold text-purple-600">OR: {cutoff.r3.or.toLocaleString()}</span>
+                              <span className="text-gray-400 mx-1">—</span>
+                              <span className="font-bold text-slate-800">CR: {cutoff.r3.cr.toLocaleString()}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">N/A (New Branch)</span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* Admission Chance Column */}
+                      {numericRank && (
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          {chance ? (
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+                              chance.level === "HIGH"
+                                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                                : chance.level === "MODERATE"
+                                ? "bg-amber-100 text-amber-800 border border-amber-300"
+                                : "bg-rose-100 text-rose-800 border border-rose-200"
+                            }`}>
+                              {chance.level === "HIGH" && <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />}
+                              {chance.level === "MODERATE" && <AlertCircle className="h-3.5 w-3.5 text-amber-600" />}
+                              {chance.level === "LOW" && <XCircle className="h-3.5 w-3.5 text-rose-600" />}
+                              <span>{chance.label}</span>
+                            </span>
+                          ) : (
+                            <span className="text-gray-300 italic text-xs">No Data</span>
+                          )}
+                        </td>
+                      )}
 
                       <td className="py-3 px-4 text-center">
                         <button

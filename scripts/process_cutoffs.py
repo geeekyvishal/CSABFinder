@@ -9,8 +9,6 @@ df1 = pd.read_csv("src/data/csv/csab_2025_r1.csv")
 df2 = pd.read_csv("src/data/csv/csab_2025_r2.csv")
 df3 = pd.read_csv("src/data/csv/csab_2025_r3.csv")
 
-df_all = pd.concat([df1, df2, df3], ignore_index=True)
-
 def clean(text):
     text = str(text).lower()
     text = re.sub(r"[^a-z0-9]", "", text)
@@ -27,31 +25,36 @@ def norm_cat(c):
     if "ST" in c and "PWD" in c: return "ST (PwD)"
     return c
 
-cutoff_map = {}
+def build_round_map(df):
+    r_map = {}
+    for _, row in df.iterrows():
+        inst = clean(row["Institute"])
+        prog = clean(row["Academic Program Name"])
+        quota = str(row["Quota"]).strip().upper()
+        cat = norm_cat(row["Seat Type"])
+        gender = clean(row["Gender"])
 
-for _, row in df_all.iterrows():
-    inst = clean(row["Institute"])
-    prog = clean(row["Academic Program Name"])
-    quota = str(row["Quota"]).strip().upper()
-    cat = norm_cat(row["Seat Type"])
-    gender = clean(row["Gender"])
+        key = (inst, prog, quota, cat, gender)
 
-    key = (inst, prog, quota, cat, gender)
+        try:
+            or_val = int(row["Opening Rank"])
+            cr_val = int(row["Closing Rank"])
+        except Exception:
+            continue
 
-    try:
-        or_val = int(row["Opening Rank"])
-        cr_val = int(row["Closing Rank"])
-    except Exception:
-        continue
+        if key not in r_map:
+            r_map[key] = {"or": or_val, "cr": cr_val}
+        else:
+            r_map[key]["or"] = min(r_map[key]["or"], or_val)
+            r_map[key]["cr"] = max(r_map[key]["cr"], cr_val)
+    return r_map
 
-    if key not in cutoff_map:
-        cutoff_map[key] = {"or": or_val, "cr": cr_val}
-    else:
-        cutoff_map[key]["or"] = min(cutoff_map[key]["or"], or_val)
-        cutoff_map[key]["cr"] = max(cutoff_map[key]["cr"], cr_val)
+map_r1 = build_round_map(df1)
+map_r2 = build_round_map(df2)
+map_r3 = build_round_map(df3)
 
-matches = 0
 matched_dict = {}
+matches = 0
 
 for v in vacancies:
     inst = clean(v["instituteName"])
@@ -69,15 +72,25 @@ for v in vacancies:
 
     item_key = f"{inst_code}_{prog_code}_{v_quota}_{v_cat}_{v_pool}"
 
-    if key in cutoff_map:
+    d1 = map_r1.get(key)
+    d2 = map_r2.get(key)
+    d3 = map_r3.get(key)
+
+    if d1 or d2 or d3:
         matches += 1
+        all_ors = [d["or"] for d in [d1, d2, d3] if d]
+        all_crs = [d["cr"] for d in [d1, d2, d3] if d]
+
         matched_dict[item_key] = {
-            "or2025": cutoff_map[key]["or"],
-            "cr2025": cutoff_map[key]["cr"]
+            "r1": d1,
+            "r2": d2,
+            "r3": d3,
+            "minOr": min(all_ors) if all_ors else None,
+            "maxCr": max(all_crs) if all_crs else None
         }
 
-print(f"Successfully processed real 2025 CSAB cutoff data!")
-print(f"Matched {matches} out of {len(vacancies)} vacancy items ({round(matches/len(vacancies)*100, 1)}% match rate).")
+print(f"Successfully processed 2025 CSAB R1, R2, R3 cutoff data!")
+print(f"Matched {matches} out of {len(vacancies)} vacancy items.")
 
 with open("src/data/cutoffs.json", "w", encoding="utf-8") as f:
     json.dump(matched_dict, f, indent=2)

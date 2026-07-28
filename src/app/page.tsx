@@ -24,8 +24,11 @@ export default function Home() {
     quota: "ALL",
     minVacancy: 1,
     eligibilityFilter: "ALL",
-    showCutoff2025: false,
-    showCutoff2024: false,
+    showRound1: true,
+    showRound2: false,
+    showRound3: false,
+    userRank: "",
+    rankDelta: 10000,
   });
 
   const filteredVacancies = useMemo(() => {
@@ -37,10 +40,10 @@ export default function Home() {
   }, [filteredVacancies]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {/* Hero Section - Apple Style */}
       <div className="bg-white border border-black/[0.08] p-6 sm:p-10 rounded-3xl shadow-sm relative overflow-hidden text-center sm:text-left">
-        <div className="max-w-2xl space-y-3.5">
+        <div className="max-w-3xl space-y-3.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0071e3]/10 text-[#0071e3] text-xs font-semibold">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Official CSAB 2026 Seat Intelligence</span>
@@ -51,7 +54,7 @@ export default function Home() {
           </h1>
 
           <p className="text-xs sm:text-sm text-[#515154] leading-relaxed">
-            Search, filter, and compare <strong>15,423 vacant engineering seats</strong> across 114 NITs, IIITs, and GFTIs. Select your state to automatically classify <strong>Home State (HS)</strong> vs <strong>Other State (OS)</strong> seat quotas.
+            Search, filter, and compare <strong>15,423 vacant engineering seats</strong> across 114 NITs, IIITs, and GFTIs. Select your state to automatically classify <strong>Home State (HS)</strong> vs <strong>Other State (OS)</strong> seat quotas, toggle 2025 Round Cutoffs, and enter your JEE rank to color-code admission chances.
           </p>
 
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
@@ -98,8 +101,11 @@ export default function Home() {
       <VacancyTable
         vacancies={filteredVacancies}
         userHomeState={filters.homeState}
-        showCutoff2025={filters.showCutoff2025}
-        showCutoff2024={filters.showCutoff2024}
+        showRound1={filters.showRound1}
+        showRound2={filters.showRound2}
+        showRound3={filters.showRound3}
+        userRank={filters.userRank}
+        rankDelta={filters.rankDelta}
       />
     </div>
   );

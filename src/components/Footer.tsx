@@ -4,7 +4,7 @@ import { GraduationCap, ExternalLink, ShieldCheck } from "lucide-react";
 export function Footer() {
   return (
     <footer className="border-t border-black/[0.08] bg-[#f5f5f7] text-[#86868b] py-10 mt-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-3">

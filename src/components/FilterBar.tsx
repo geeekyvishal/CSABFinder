@@ -5,14 +5,11 @@ import { INDIAN_STATES, CATEGORIES, SEAT_POOLS, QUOTAS, MAJOR_BRANCHES } from "@
 import { 
   Search, 
   MapPin, 
-  UserCheck, 
-  Users, 
-  Building2, 
   RotateCcw, 
-  SlidersHorizontal,
-  GraduationCap,
   TrendingUp,
-  Sliders
+  Award,
+  Sparkles,
+  Layers
 } from "lucide-react";
 import institutesData from "@/data/institutes.json";
 
@@ -35,14 +32,17 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
       quota: "ALL",
       minVacancy: 1,
       eligibilityFilter: "ALL",
-      showCutoff2025: false,
-      showCutoff2024: false,
+      showRound1: true,
+      showRound2: false,
+      showRound3: false,
+      userRank: "",
+      rankDelta: 10000,
     });
   };
 
   return (
-    <div className="bg-white border border-black/[0.08] p-5 rounded-2xl shadow-sm mb-6 space-y-4">
-      {/* Top Search & State Header */}
+    <div className="bg-white border border-black/[0.08] p-4 sm:p-5 rounded-2xl shadow-sm mb-6 space-y-4">
+      {/* Row 1: Search & Home State */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Search Query */}
         <div className="md:col-span-6 relative">
@@ -91,7 +91,62 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
         </div>
       </div>
 
-      {/* Row 2: Category, Seat Pool, College Type, Quota */}
+      {/* Row 2: Candidate Rank & Rank Delta Predictor (Highlight feature) */}
+      <div className="p-3.5 bg-blue-50/50 rounded-xl border border-blue-200/60 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+        <div className="md:col-span-4 flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-[#0071e3] text-white flex items-center justify-center shrink-0">
+            <Award className="h-4 w-4" />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold text-[#1d1d1f]">JEE Main Rank Filter & Predictor</h4>
+            <p className="text-[10px] text-[#86868b]">Color codes rows by admission chance</p>
+          </div>
+        </div>
+
+        {/* Rank Input */}
+        <div className="md:col-span-5 relative">
+          <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
+            Your Category CRL / Category Rank:
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              placeholder="e.g. 25000 (Leave blank for standard view)"
+              value={filters.userRank}
+              onChange={(e) => setFilters((prev) => ({ ...prev, userRank: e.target.value }))}
+              className="w-full bg-white border border-blue-300 rounded-xl px-3 py-1.5 text-xs text-[#1d1d1f] font-semibold placeholder-gray-400 focus:outline-none focus:border-[#0071e3]"
+            />
+            {filters.userRank && (
+              <button
+                onClick={() => setFilters((prev) => ({ ...prev, userRank: "" }))}
+                className="absolute right-2.5 top-1.5 text-[10px] text-gray-400 hover:text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Rank Buffer / Delta Select */}
+        <div className="md:col-span-3">
+          <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">
+            Rank Delta / Buffer:
+          </label>
+          <select
+            value={filters.rankDelta}
+            onChange={(e) => setFilters((prev) => ({ ...prev, rankDelta: Number(e.target.value) }))}
+            className="w-full bg-white border border-blue-300 rounded-xl px-2.5 py-1.5 text-xs text-[#1d1d1f] font-medium focus:outline-none"
+          >
+            <option value={5000}>± 5,000 Ranks</option>
+            <option value={10000}>± 10,000 Ranks</option>
+            <option value={20000}>± 20,000 Ranks</option>
+            <option value={50000}>± 50,000 Ranks</option>
+            <option value={999999}>Show All Options</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Row 3: Category, Seat Pool, College Type, Quota */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
         <div>
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
@@ -161,37 +216,47 @@ export function FilterBar({ filters, setFilters, totalMatches }: FilterBarProps)
         </div>
       </div>
 
-      {/* Cutoff Columns Toggle Bar */}
+      {/* Row 4: 2025 Rounds Checkboxes */}
       <div className="p-3 bg-[#f5f5f7] rounded-xl border border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-[#0071e3]" />
-          <span className="font-semibold text-[#1d1d1f]">Previous Year Cutoffs Columns:</span>
+          <span className="font-semibold text-[#1d1d1f]">Show 2025 Cutoff Columns:</span>
         </div>
 
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-[#1d1d1f]">
             <input
               type="checkbox"
-              checked={filters.showCutoff2025}
-              onChange={(e) => setFilters((prev) => ({ ...prev, showCutoff2025: e.target.checked }))}
+              checked={filters.showRound1}
+              onChange={(e) => setFilters((prev) => ({ ...prev, showRound1: e.target.checked }))}
               className="accent-[#0071e3] h-4 w-4 rounded cursor-pointer"
             />
-            <span>Show 2025 Cutoff (OR - CR)</span>
+            <span>Round 1 Cutoff</span>
           </label>
 
           <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-[#1d1d1f]">
             <input
               type="checkbox"
-              checked={filters.showCutoff2024}
-              onChange={(e) => setFilters((prev) => ({ ...prev, showCutoff2024: e.target.checked }))}
+              checked={filters.showRound2}
+              onChange={(e) => setFilters((prev) => ({ ...prev, showRound2: e.target.checked }))}
               className="accent-[#0071e3] h-4 w-4 rounded cursor-pointer"
             />
-            <span>Show 2024 Cutoff (OR - CR)</span>
+            <span>Round 2 Cutoff</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-[#1d1d1f]">
+            <input
+              type="checkbox"
+              checked={filters.showRound3}
+              onChange={(e) => setFilters((prev) => ({ ...prev, showRound3: e.target.checked }))}
+              className="accent-[#0071e3] h-4 w-4 rounded cursor-pointer"
+            />
+            <span>Round 3 Cutoff</span>
           </label>
         </div>
       </div>
 
-      {/* Row 3: Branch filter, Specific College dropdown, Minimum seats slider, & Reset */}
+      {/* Row 5: Branch, College, Min Seats & Reset */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 pt-2 border-t border-black/[0.06]">
         <div className="md:col-span-4">
           <label className="block text-[11px] font-semibold text-[#86868b] mb-1">
