@@ -1,5 +1,5 @@
 /**
- * Utility to extract text from PDF files using pdfjs-dist and parse choice lists
+ * Utility to extract text from PDF files using pdfjs-dist (with pure JS fallback) and parse choice lists
  */
 
 export interface ParsedChoice {
@@ -10,51 +10,120 @@ export interface ParsedChoice {
 }
 
 /**
- * Extracts raw text content from an ArrayBuffer of a PDF file using pdfjs-dist
+ * Pure JavaScript fallback PDF text stream extractor (works without workers, eval, or CSP limits)
+ */
+function fallbackExtractPDFText(arrayBuffer: ArrayBuffer): string {
+  try {
+    const bytes = new Uint8Array(arrayBuffer);
+    const decoder = new TextDecoder("latin1");
+    const raw = decoder.decode(bytes);
+
+    const extractedStrings: string[] = [];
+
+    // Match text inside (...) Tj or [(...) ...] TJ operators
+    const tjMatches = raw.matchAll(/\(([^)]+)\)\s*Tj/g);
+    for (const match of tjMatches) {
+      if (match[1] && match[1].trim().length > 0) {
+        extractedStrings.push(match[1].trim());
+      }
+    }
+
+    if (extractedStrings.length < 5) {
+      const tjArrayMatches = raw.matchAll(/\[((?:\([^)]+\)\s*|[\d.-]+\s*)+)\]\s*TJ/g);
+      for (const match of tjArrayMatches) {
+        const innerMatches = match[1].matchAll(/\(([^)]+)\)/g);
+        for (const inner of innerMatches) {
+          if (inner[1] && inner[1].trim().length > 0) {
+            extractedStrings.push(inner[1].trim());
+          }
+        }
+      }
+    }
+
+    return extractedStrings.join("\n");
+  } catch (e) {
+    console.error("Fallback PDF extraction failed:", e);
+    return "";
+  }
+}
+
+/**
+ * Extracts raw text content from an ArrayBuffer of a PDF file using pdfjs-dist or pure JS fallback
  */
 export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
   try {
     // @ts-ignore
     const pdfjsLib = await import("pdfjs-dist");
-    
-    // Set worker source URL safely without reassigning getter property
-    if (typeof window !== "undefined" && pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || "3.11.174"}/pdf.worker.min.js`;
+
+    // Configure workerSrc safely without breaking ES module getter properties
+    try {
+      if (typeof window !== "undefined" && pdfjsLib) {
+        const workerUrl = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || "3.11.174"}/pdf.worker.min.js`;
+        const opts = pdfjsLib.GlobalWorkerOptions;
+        if (opts) {
+          try {
+            opts.workerSrc = workerUrl;
+          } catch {
+            Object.defineProperty(opts, "workerSrc", {
+              value: workerUrl,
+              writable: true,
+              configurable: true,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Could not set GlobalWorkerOptions.workerSrc:", e);
     }
 
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    // Disable eval to comply with site Content Security Policy (CSP)
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      isEvalSupported: false,
+      useSystemFonts: true,
+    });
+
     const pdf = await loadingTask.promise;
     let fullText = "";
 
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      
+
       let lastY: number | null = null;
       let pageText = "";
 
       for (const item of content.items as any[]) {
         if (!item.str) continue;
-        
+
         // If Y coordinate changed significantly, insert a newline
         if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
           pageText += "\n";
         } else if (pageText && !pageText.endsWith("\n") && !pageText.endsWith(" ")) {
           pageText += " ";
         }
-        
+
         pageText += item.str;
         lastY = item.transform[5];
       }
-      
+
       fullText += pageText + "\n--- PAGE BREAK ---\n";
     }
 
-    return fullText;
+    if (fullText.trim().length > 20) {
+      return fullText;
+    }
   } catch (error: any) {
-    console.error("PDF Extraction failed:", error);
-    throw new Error(error?.message || "Failed to extract text from PDF file. Please ensure it is a valid PDF.");
+    console.warn("pdfjs-dist extraction failed or blocked by CSP, switching to pure JS stream extractor:", error);
   }
+
+  // Pure JS Fallback if pdfjs-dist was blocked by CSP or worker error
+  const fallbackText = fallbackExtractPDFText(arrayBuffer);
+  if (fallbackText.trim().length > 0) {
+    return fallbackText;
+  }
+
+  throw new Error("Could not extract text from PDF. Please ensure the PDF is valid or copy-paste your choices directly into the text tab.");
 }
 
 /**
@@ -155,7 +224,6 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
     }
 
     // Pattern 1: Official CSAB 2026 Choice Rearrange Table Row
-    // Starts with number: e.g. "1 National Institute of Technology, Tiruchirappalli Computer Science and Engineering (4 Years, Bachelor of Technology) 1"
     const numberMatch = line.match(/^(\d+)[\s\t\.:,]+(.*)$/);
     if (numberMatch) {
       const choiceNo = parseInt(numberMatch[1], 10);
@@ -172,7 +240,7 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
         continue;
       }
 
-      // If split by keyword failed, try regex match for double spaces or tabs or pipes
+      // Regex match for double spaces, tabs, or hyphens/pipes
       const regexMatch = restOfLine.match(/^([A-Za-z0-9\s,\.\(\)\-\&\']+?)(?:\s{2,}|\t|\s*[-–|]\s*)([A-Za-z0-9\s,\.\(\)\-\&\']+)/);
       if (regexMatch) {
         const rawInstitute = regexMatch[1].trim();
