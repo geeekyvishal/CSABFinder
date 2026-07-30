@@ -30,7 +30,8 @@ import {
   ArrowDown, 
   BookOpen, 
   RefreshCw,
-  FolderOpen
+  FolderOpen,
+  Printer
 } from "lucide-react";
 
 interface SavedChoiceList {
@@ -262,10 +263,40 @@ export default function ChoiceListPage() {
     document.body.removeChild(link);
   };
 
+  // Print Report Handler
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="space-y-6 w-full pb-12">
+      {/* Print-Only Header Report (Visible only during window.print()) */}
+      <div className="hidden print:block mb-6 text-slate-900 border-b border-slate-300 pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{listName || "CSAB 2026 Choice List & Cutoffs Report"}</h1>
+            <p className="text-xs text-slate-600">CSAB Special Round Cutoffs & Admission Intelligence Report</p>
+          </div>
+          <div className="text-right text-xs text-slate-600">
+            <div>Date: {new Date().toLocaleDateString("en-IN")}</div>
+            <div>JEE Main Rank: {userRank || "N/A"}</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 mt-3 p-3 bg-slate-100 rounded-lg text-xs border border-slate-200">
+          <div><strong>Category:</strong> {category}</div>
+          <div><strong>Quota:</strong> {quota}</div>
+          <div><strong>Seat Pool:</strong> {seatPool}</div>
+          <div><strong>Total Choices:</strong> {stats.total}</div>
+          <div><strong>High Chance:</strong> {stats.safe}</div>
+          <div><strong>Borderline:</strong> {stats.borderline}</div>
+          <div><strong>High Risk:</strong> {stats.risk}</div>
+          <div><strong>Matched Cutoffs:</strong> {stats.matchedCount} / {stats.total}</div>
+        </div>
+      </div>
+
       {/* Hero Header Card */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-6 sm:p-10 rounded-3xl shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-6 sm:p-10 rounded-3xl shadow-xl relative overflow-hidden print:hidden">
         <div className="max-w-3xl space-y-3.5 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold border border-white/10">
             <Sparkles className="h-3.5 w-3.5 text-amber-400" />
@@ -325,7 +356,7 @@ export default function ChoiceListPage() {
       </div>
 
       {/* Input Method Tabs & Upload Box */}
-      <div className="bg-white border border-black/[0.08] p-6 rounded-3xl shadow-sm space-y-4">
+      <div className="bg-white border border-black/[0.08] p-6 rounded-3xl shadow-sm space-y-4 print:hidden">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2">
             <button
@@ -408,7 +439,7 @@ export default function ChoiceListPage() {
       </div>
 
       {/* Interactive Controls & Filters */}
-      <div className="bg-white border border-black/[0.08] p-5 rounded-3xl shadow-sm space-y-4">
+      <div className="bg-white border border-black/[0.08] p-5 rounded-3xl shadow-sm space-y-4 print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-blue-600" />
@@ -439,6 +470,15 @@ export default function ChoiceListPage() {
             >
               <Download className="h-3.5 w-3.5 text-blue-600" />
               <span>Export CSV</span>
+            </button>
+
+            <button
+              onClick={handlePrint}
+              disabled={matchedChoices.length === 0}
+              className="px-3.5 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-xs font-semibold disabled:opacity-50 transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <Printer className="h-3.5 w-3.5" />
+              <span>Print / Save PDF</span>
             </button>
           </div>
         </div>
@@ -599,7 +639,7 @@ export default function ChoiceListPage() {
                   <th className="py-3 px-4 font-bold text-center">2025 R3 Cutoff</th>
                   <th className="py-3 px-4 font-bold text-center">Closing Rank (CR)</th>
                   <th className="py-3 px-4 font-bold text-center">Admission Chance</th>
-                  <th className="py-3 px-4 font-bold text-center w-24">Actions</th>
+                  <th className="py-3 px-4 font-bold text-center w-24 print:hidden">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -715,7 +755,7 @@ export default function ChoiceListPage() {
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 text-center">
+                      <td className="py-3.5 px-4 text-center print:hidden">
                         <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => handleMoveChoice(index, "up")}
