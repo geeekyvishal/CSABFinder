@@ -17,9 +17,8 @@ export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<stri
     // @ts-ignore
     const pdfjsLib = await import("pdfjs-dist");
     
-    // Set worker source URL
-    if (typeof window !== "undefined" && pdfjsLib) {
-      pdfjsLib.GlobalWorkerOptions = pdfjsLib.GlobalWorkerOptions || {};
+    // Set worker source URL safely without reassigning getter property
+    if (typeof window !== "undefined" && pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || "3.11.174"}/pdf.worker.min.js`;
     }
 
@@ -52,10 +51,76 @@ export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<stri
     }
 
     return fullText;
-  } catch (error) {
+  } catch (error: any) {
     console.error("PDF Extraction failed:", error);
-    throw new Error("Failed to extract text from PDF file. Please ensure it is a valid PDF.");
+    throw new Error(error?.message || "Failed to extract text from PDF file. Please ensure it is a valid PDF.");
   }
+}
+
+/**
+ * Common program start keywords in CSAB / JoSAA choice lists
+ */
+const PROGRAM_KEYWORDS = [
+  "computer science",
+  "electronics and communication",
+  "electronics & communication",
+  "electrical engineering",
+  "mechanical engineering",
+  "civil engineering",
+  "chemical engineering",
+  "information technology",
+  "data science",
+  "artificial intelligence",
+  "bio technology",
+  "biotechnology",
+  "biomedical",
+  "aerospace",
+  "metallurgical",
+  "materials engineering",
+  "production engineering",
+  "industrial",
+  "instrumentation",
+  "mechatronics",
+  "architecture",
+  "planning",
+  "mathematics and computing",
+  "physics",
+  "chemistry",
+  "engineering physics",
+];
+
+/**
+ * Splits combined row text into Institute Name and Academic Program Name
+ */
+function splitInstAndProg(rowText: string): { institute: string; program: string } | null {
+  const lowerText = rowText.toLowerCase();
+
+  // Find earliest matching program keyword
+  let bestKeywordIdx = -1;
+
+  for (const kw of PROGRAM_KEYWORDS) {
+    const idx = lowerText.indexOf(kw);
+    if (idx !== -1) {
+      if (bestKeywordIdx === -1 || idx < bestKeywordIdx) {
+        bestKeywordIdx = idx;
+      }
+    }
+  }
+
+  if (bestKeywordIdx !== -1) {
+    let inst = rowText.substring(0, bestKeywordIdx).trim();
+    let prog = rowText.substring(bestKeywordIdx).trim();
+
+    // Remove trailing number if present (e.g. "New Choice No" column at the end of the row)
+    prog = prog.replace(/\s+\d+$/, "").trim();
+    inst = inst.replace(/,$/, "").trim();
+
+    if (inst.length >= 3 && prog.length >= 3) {
+      return { institute: inst, program: prog };
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -75,6 +140,10 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
 
     // Skip known header lines
     if (
+      line.toLowerCase().startsWith("dasa and csab") ||
+      line.toLowerCase().startsWith("nits, iiits") ||
+      line.toLowerCase().startsWith("choice rearrange") ||
+      line.toLowerCase().startsWith("total submitted choices") ||
       line.toLowerCase().startsWith("choice no") ||
       line.toLowerCase().startsWith("choice number") ||
       line.toLowerCase().includes("locked choices") ||
@@ -85,25 +154,43 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       }
     }
 
-    // Try matching line starting with choice number
-    const numberedMatch = line.match(/^(\d+)[\.\s\t:]+([A-Za-z0-9\s,\.\(\)\-\&]+?)(?:\s{2,}|\t|\s*[-–|]\s*)([A-Za-z0-9\s,\.\(\)\-\&]+)$/);
-    if (numberedMatch) {
-      const choiceNo = parseInt(numberedMatch[1], 10);
-      const rawInstitute = numberedMatch[2].trim();
-      const rawProgram = numberedMatch[3].trim();
+    // Pattern 1: Official CSAB 2026 Choice Rearrange Table Row
+    // Starts with number: e.g. "1 National Institute of Technology, Tiruchirappalli Computer Science and Engineering (4 Years, Bachelor of Technology) 1"
+    const numberMatch = line.match(/^(\d+)[\s\t\.:,]+(.*)$/);
+    if (numberMatch) {
+      const choiceNo = parseInt(numberMatch[1], 10);
+      const restOfLine = numberMatch[2].trim();
 
-      if (rawInstitute.length >= 3 && rawProgram.length >= 3) {
+      const splitResult = splitInstAndProg(restOfLine);
+      if (splitResult) {
         choices.push({
           choiceNo: choiceNo || choiceCounter++,
-          rawInstitute,
-          rawProgram,
+          rawInstitute: splitResult.institute,
+          rawProgram: splitResult.program,
           rawLine: line,
         });
         continue;
       }
+
+      // If split by keyword failed, try regex match for double spaces or tabs or pipes
+      const regexMatch = restOfLine.match(/^([A-Za-z0-9\s,\.\(\)\-\&\']+?)(?:\s{2,}|\t|\s*[-–|]\s*)([A-Za-z0-9\s,\.\(\)\-\&\']+)/);
+      if (regexMatch) {
+        const rawInstitute = regexMatch[1].trim();
+        const rawProgram = regexMatch[2].replace(/\s+\d+$/, "").trim();
+
+        if (rawInstitute.length >= 3 && rawProgram.length >= 3) {
+          choices.push({
+            choiceNo: choiceNo || choiceCounter++,
+            rawInstitute,
+            rawProgram,
+            rawLine: line,
+          });
+          continue;
+        }
+      }
     }
 
-    // CSV format: "1,NIT Trichy,Computer Science..."
+    // Pattern 2: CSV format: "1,NIT Trichy,Computer Science..."
     if (line.includes(",")) {
       const parts = line.split(",").map((p) => p.trim());
       if (parts.length >= 3) {
@@ -120,7 +207,7 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       }
     }
 
-    // Separated by | or hyphen
+    // Pattern 3: Separated by | or hyphen
     if (line.includes("|") || line.includes(" - ")) {
       const parts = line.split(/\||\s-\s/).map((p) => p.trim());
       if (parts.length >= 2) {
