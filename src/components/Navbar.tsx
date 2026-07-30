@@ -9,7 +9,8 @@ import {
   BarChart2, 
   Bookmark, 
   Building2,
-  GraduationCap
+  GraduationCap,
+  FileText
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -43,6 +44,7 @@ export function Navbar() {
 
   const navItems = [
     { name: "Finder", href: "/", icon: Search },
+    { name: "PDF Choice List", href: "/choice-list", icon: FileText },
     { name: "College Wizard", href: "/wizard", icon: Wand2 },
     { name: "Compare", href: "/compare", icon: GitCompare },
     { name: "Analytics", href: "/analytics", icon: BarChart2 },

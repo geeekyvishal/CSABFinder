@@ -8,7 +8,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { VacancyTable } from "@/components/VacancyTable";
 import { StatsOverview } from "@/components/StatsOverview";
 import Link from "next/link";
-import { Sparkles, Wand2, ArrowRight, Flame, AlertTriangle } from "lucide-react";
+import { Sparkles, Wand2, ArrowRight, Flame, AlertTriangle, FileText } from "lucide-react";
 
 const INITIAL_FILTERS: FilterState = {
   searchQuery: "",
@@ -83,12 +83,20 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
             <Link
-              href="/wizard"
+              href="/choice-list"
               className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-xs sm:text-sm bg-[#0071e3] text-white hover:bg-[#0077ed] transition-colors shadow-sm"
             >
-              <Wand2 className="h-4 w-4" />
-              <span>Launch "Find My College" Wizard</span>
+              <FileText className="h-4 w-4" />
+              <span>Parse Choice PDF & Cutoffs</span>
               <ArrowRight className="h-4 w-4" />
+            </Link>
+
+            <Link
+              href="/wizard"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-xs sm:text-sm bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed] transition-colors"
+            >
+              <Wand2 className="h-4 w-4 text-[#0071e3]" />
+              <span>College Wizard</span>
             </Link>
 
             <Link
