@@ -10,6 +10,37 @@ export interface ParsedChoice {
 }
 
 /**
+ * Strips leading/trailing quotes and extra whitespace from strings
+ */
+function cleanQuotes(str: string): string {
+  if (!str) return "";
+  return str.replace(/^["'\s]+|["'\s]+$/g, "").replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Parses a CSV line safely, respecting quoted fields containing commas
+ */
+function parseCSVLine(line: string): string[] {
+  const parts: string[] = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"' || char === "'") {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      parts.push(cleanQuotes(current));
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  parts.push(cleanQuotes(current));
+  return parts;
+}
+
+/**
  * Pure JavaScript fallback PDF text stream extractor (works without workers, eval, or CSP limits)
  */
 function fallbackExtractPDFText(arrayBuffer: ArrayBuffer): string {
@@ -24,7 +55,7 @@ function fallbackExtractPDFText(arrayBuffer: ArrayBuffer): string {
     const tjMatches = raw.matchAll(/\(([^)]+)\)\s*Tj/g);
     for (const match of tjMatches) {
       if (match[1] && match[1].trim().length > 0) {
-        extractedStrings.push(match[1].trim());
+        extractedStrings.push(cleanQuotes(match[1]));
       }
     }
 
@@ -34,7 +65,7 @@ function fallbackExtractPDFText(arrayBuffer: ArrayBuffer): string {
         const innerMatches = match[1].matchAll(/\(([^)]+)\)/g);
         for (const inner of innerMatches) {
           if (inner[1] && inner[1].trim().length > 0) {
-            extractedStrings.push(inner[1].trim());
+            extractedStrings.push(cleanQuotes(inner[1]));
           }
         }
       }
@@ -177,15 +208,15 @@ function splitInstAndProg(rowText: string): { institute: string; program: string
   }
 
   if (bestKeywordIdx !== -1) {
-    let inst = rowText.substring(0, bestKeywordIdx).trim();
-    let prog = rowText.substring(bestKeywordIdx).trim();
+    let inst = cleanQuotes(rowText.substring(0, bestKeywordIdx));
+    let prog = cleanQuotes(rowText.substring(bestKeywordIdx));
 
-    // Remove trailing number if present (e.g. "New Choice No" column at the end of the row)
+    // Remove trailing number if present
     prog = prog.replace(/\s+\d+$/, "").trim();
     inst = inst.replace(/,$/, "").trim();
 
     if (inst.length >= 3 && prog.length >= 3) {
-      return { institute: inst, program: prog };
+      return { institute: cleanQuotes(inst), program: cleanQuotes(prog) };
     }
   }
 
@@ -193,7 +224,7 @@ function splitInstAndProg(rowText: string): { institute: string; program: string
 }
 
 /**
- * Parses raw text extracted from PDF or pasted string into structured choices
+ * Parses raw text extracted from PDF or pasted string/CSV into structured choices
  */
 export function parseChoicesFromText(text: string): ParsedChoice[] {
   const lines = text
@@ -223,7 +254,24 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       }
     }
 
-    // Pattern 1: Official CSAB 2026 Choice Rearrange Table Row
+    // Pattern 1: CSV format with Quote Support e.g. 48,"Indian Institute of Information Technology, Allahabad","B. Tech..."
+    if (line.includes(",")) {
+      const parts = parseCSVLine(line);
+      if (parts.length >= 3) {
+        const potentialNum = parseInt(parts[0], 10);
+        if (!isNaN(potentialNum) && parts[1].length >= 3 && parts[2].length >= 3) {
+          choices.push({
+            choiceNo: potentialNum,
+            rawInstitute: cleanQuotes(parts[1]),
+            rawProgram: cleanQuotes(parts.slice(2).join(" ")),
+            rawLine: line,
+          });
+          continue;
+        }
+      }
+    }
+
+    // Pattern 2: Official CSAB Choice Rearrange Table Row (starts with number)
     const numberMatch = line.match(/^(\d+)[\s\t\.:,]+(.*)$/);
     if (numberMatch) {
       const choiceNo = parseInt(numberMatch[1], 10);
@@ -233,8 +281,8 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       if (splitResult) {
         choices.push({
           choiceNo: choiceNo || choiceCounter++,
-          rawInstitute: splitResult.institute,
-          rawProgram: splitResult.program,
+          rawInstitute: cleanQuotes(splitResult.institute),
+          rawProgram: cleanQuotes(splitResult.program),
           rawLine: line,
         });
         continue;
@@ -243,8 +291,8 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       // Regex match for double spaces, tabs, or hyphens/pipes
       const regexMatch = restOfLine.match(/^([A-Za-z0-9\s,\.\(\)\-\&\']+?)(?:\s{2,}|\t|\s*[-–|]\s*)([A-Za-z0-9\s,\.\(\)\-\&\']+)/);
       if (regexMatch) {
-        const rawInstitute = regexMatch[1].trim();
-        const rawProgram = regexMatch[2].replace(/\s+\d+$/, "").trim();
+        const rawInstitute = cleanQuotes(regexMatch[1]);
+        const rawProgram = cleanQuotes(regexMatch[2].replace(/\s+\d+$/, ""));
 
         if (rawInstitute.length >= 3 && rawProgram.length >= 3) {
           choices.push({
@@ -258,26 +306,9 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
       }
     }
 
-    // Pattern 2: CSV format: "1,NIT Trichy,Computer Science..."
-    if (line.includes(",")) {
-      const parts = line.split(",").map((p) => p.trim());
-      if (parts.length >= 3) {
-        const potentialNum = parseInt(parts[0], 10);
-        if (!isNaN(potentialNum) && parts[1].length > 3 && parts[2].length > 3) {
-          choices.push({
-            choiceNo: potentialNum,
-            rawInstitute: parts[1],
-            rawProgram: parts.slice(2).join(", "),
-            rawLine: line,
-          });
-          continue;
-        }
-      }
-    }
-
     // Pattern 3: Separated by | or hyphen
     if (line.includes("|") || line.includes(" - ")) {
-      const parts = line.split(/\||\s-\s/).map((p) => p.trim());
+      const parts = line.split(/\||\s-\s/).map((p) => cleanQuotes(p));
       if (parts.length >= 2) {
         let choiceNo = choiceCounter++;
         let instIdx = 0;
@@ -286,7 +317,7 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
         const firstNumMatch = parts[0].match(/^(\d+)[\s\.]+(.*)$/);
         if (firstNumMatch) {
           choiceNo = parseInt(firstNumMatch[1], 10);
-          parts[0] = firstNumMatch[2];
+          parts[0] = cleanQuotes(firstNumMatch[2]);
         }
 
         if (parts.length >= 3 && !isNaN(parseInt(parts[0], 10))) {
@@ -298,8 +329,8 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
         if (parts[instIdx] && parts[progIdx]) {
           choices.push({
             choiceNo,
-            rawInstitute: parts[instIdx],
-            rawProgram: parts[progIdx],
+            rawInstitute: cleanQuotes(parts[instIdx]),
+            rawProgram: cleanQuotes(parts[progIdx]),
             rawLine: line,
           });
           continue;
@@ -331,9 +362,9 @@ export function parseChoicesFromText(text: string): ParsedChoice[] {
         line.match(/\b(computer|electrical|electronics|mechanical|civil|chemical|biotechnology)\b/i);
 
       if (isInst && !isProg) {
-        currentInst = line;
+        currentInst = cleanQuotes(line);
       } else if (isProg && currentInst) {
-        currentProg = line;
+        currentProg = cleanQuotes(line);
         choices.push({
           choiceNo: currentChoiceNo++,
           rawInstitute: currentInst,
