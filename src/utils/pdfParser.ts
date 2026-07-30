@@ -14,12 +14,13 @@ export interface ParsedChoice {
  */
 export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
   try {
-    // Dynamic import to prevent SSR build issues in Next.js
+    // @ts-ignore
     const pdfjsLib = await import("pdfjs-dist");
     
     // Set worker source URL
-    if (typeof window !== "undefined") {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+    if (typeof window !== "undefined" && pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions = pdfjsLib.GlobalWorkerOptions || {};
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || "3.11.174"}/pdf.worker.min.js`;
     }
 
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
