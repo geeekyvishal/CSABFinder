@@ -17,19 +17,64 @@ export interface MatchedChoice {
 const vacancies = vacanciesData as VacancyItem[];
 const cutoffsMap = cutoffsData as Record<string, CutoffData>;
 
-// Helper to normalize strings for comparison
-function clean(str: string): string {
-  return str
+// Generic stop words for institute matching
+const GENERIC_INST_TOKENS = new Set([
+  "national", "institute", "of", "technology", "indian", "information", "and", "management", "science", "engineering"
+]);
+
+function normalizeString(s: string): string {
+  return s
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, "")
-    .replace(/nationalinstituteoftechnology/g, "nit")
-    .replace(/indianinstituteofinformationtechnology/g, "iiit")
-    .replace(/bacheloroftechnology/g, "btech")
-    .replace(/4years/g, "");
+    .replace(/&/g, "and")
+    .replace(/b\.\s*tech\./g, "btech")
+    .replace(/b\.tech/g, "btech")
+    .replace(/bachelor of technology/g, "btech")
+    .replace(/m\.\s*tech\./g, "mtech")
+    .replace(/m\.tech/g, "mtech")
+    .replace(/master of technology/g, "mtech")
+    .replace(/master of business administration/g, "mba")
+    .replace(/[\(\)\,\-\.\/]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
+function getDistinctTokens(name: string): { norm: string; tokens: Set<string> } {
+  const norm = normalizeString(name);
+  const rawTokens = norm.split(" ");
+  const distinct = new Set(rawTokens.filter((t) => !GENERIC_INST_TOKENS.has(t) && t.length > 1));
+  return { norm, tokens: distinct };
+}
+
+// Pre-index unique vacancies
+interface IndexedVacancy {
+  item: VacancyItem;
+  instNorm: string;
+  instTokens: Set<string>;
+  progNorm: string;
+  progTokens: Set<string>;
+}
+
+const uniqueVacanciesMap = new Map<string, IndexedVacancy>();
+
+vacancies.forEach((item) => {
+  const key = `${item.instituteCode}_${item.programCode}`;
+  if (!uniqueVacanciesMap.has(key)) {
+    const { norm: instNorm, tokens: instTokens } = getDistinctTokens(item.instituteName);
+    const { norm: progNorm, tokens: progTokens } = getDistinctTokens(item.programName);
+    uniqueVacanciesMap.set(key, {
+      item,
+      instNorm,
+      instTokens,
+      progNorm,
+      progTokens,
+    });
+  }
+});
+
+const indexedVacancies = Array.from(uniqueVacanciesMap.values());
+
 /**
- * Matches raw parsed choices against official CSAB vacancies dataset
+ * Matches raw parsed choices against official CSAB vacancies dataset with high precision
  */
 export function matchChoicesWithCutoffs(
   parsedChoices: ParsedChoice[],
@@ -38,67 +83,54 @@ export function matchChoicesWithCutoffs(
   filterSeatPool: string = "Gender-Neutral",
   userRank: number | null = null
 ): MatchedChoice[] {
-  // Pre-index unique institute/program pairs from vacancies
-  const uniqueProgramsMap = new Map<string, VacancyItem>();
-  vacancies.forEach((item) => {
-    const key = `${item.instituteCode}_${item.programCode}`;
-    if (!uniqueProgramsMap.has(key)) {
-      uniqueProgramsMap.set(key, item);
-    }
-  });
-
   return parsedChoices.map((choice, index) => {
-    const rawInstClean = clean(choice.rawInstitute);
-    const rawProgClean = clean(choice.rawProgram);
+    const { norm: rawInstNorm, tokens: rawInstTokens } = getDistinctTokens(choice.rawInstitute);
+    const { norm: rawProgNorm, tokens: rawProgTokens } = getDistinctTokens(choice.rawProgram);
 
     let bestMatch: VacancyItem | undefined = undefined;
-    let highestScore = 0;
+    let highestScore = -1;
 
-    // Search through unique vacancy items
-    for (const item of vacancies) {
-      const instClean = clean(item.instituteName);
-      const progClean = clean(item.programName);
-
-      let score = 0;
-
-      // Institute matching
-      if (rawInstClean === instClean) {
-        score += 0.5;
-      } else if (rawInstClean.includes(instClean) || instClean.includes(rawInstClean)) {
-        score += 0.35;
-      } else {
-        // Check Institute Code match
-        if (choice.rawInstitute.includes(item.instituteCode.toString())) {
-          score += 0.4;
+    for (const iv of indexedVacancies) {
+      // 1. Calculate Institute Similarity
+      let instScore = 0;
+      if (rawInstNorm === iv.instNorm) {
+        instScore = 1.0;
+      } else if (rawInstTokens.size > 0 && iv.instTokens.size > 0) {
+        const overlap = new Set([...rawInstTokens].filter((x) => iv.instTokens.has(x)));
+        if (overlap.size === rawInstTokens.size || overlap.size === iv.instTokens.size) {
+          instScore = 0.9;
+        } else {
+          instScore = overlap.size / Math.max(rawInstTokens.size, iv.instTokens.size);
         }
       }
 
-      // Program matching
-      if (rawProgClean === progClean) {
-        score += 0.5;
-      } else if (rawProgClean.includes(progClean) || progClean.includes(rawProgClean)) {
-        score += 0.35;
-      } else {
-        // Token match
-        const progTokens = rawProgClean.split(/\s+/);
-        const matchedTokens = progTokens.filter((t) => t.length > 2 && progClean.includes(t));
-        if (matchedTokens.length > 0) {
-          score += (matchedTokens.length / progTokens.length) * 0.4;
-        }
+      // STRICT REQUIREMENT: Institute must have at least 0.4 similarity
+      if (instScore < 0.4) {
+        continue;
       }
 
-      if (score > highestScore) {
-        highestScore = score;
-        bestMatch = item;
+      // 2. Calculate Program Similarity
+      let progScore = 0;
+      if (rawProgNorm === iv.progNorm) {
+        progScore = 1.0;
+      } else if (rawProgTokens.size > 0 && iv.progTokens.size > 0) {
+        const overlap = new Set([...rawProgTokens].filter((x) => iv.progTokens.has(x)));
+        progScore = overlap.size / Math.max(rawProgTokens.size, iv.progTokens.size);
+      }
+
+      // Combined weighted score: 60% Institute + 40% Program
+      const totalScore = instScore * 0.6 + progScore * 0.4;
+
+      if (totalScore > highestScore) {
+        highestScore = totalScore;
+        bestMatch = iv.item;
       }
     }
 
     let cutoff: CutoffData | null = null;
     let status: MatchedChoice["status"] = "UNMATCHED";
 
-    if (bestMatch && highestScore >= 0.3) {
-      // Form lookup key: {instituteCode}_{programCode}_{quota}_{category}_{seatPool}
-      // Note: Gender pool normalized string matching
+    if (bestMatch && highestScore >= 0.45) {
       let normalizedPool = filterSeatPool;
       if (filterSeatPool.toLowerCase().includes("female")) {
         normalizedPool = "Female-only (including Supernumerary)";
@@ -115,7 +147,6 @@ export function matchChoicesWithCutoffs(
         cutoff = cutoffsMap[altKey] || null;
       }
 
-      // Evaluate admission chance status based on user rank vs max closing rank
       if (cutoff && (cutoff.maxCr || cutoff.r3?.cr || cutoff.r1?.cr)) {
         const closingRank = cutoff.maxCr || cutoff.r3?.cr || cutoff.r1?.cr || 0;
         
@@ -128,7 +159,7 @@ export function matchChoicesWithCutoffs(
             status = "HIGH_RISK";
           }
         } else {
-          status = "SAFE"; // default if no rank provided
+          status = "SAFE";
         }
       } else {
         status = "NO_CUTOFF";
@@ -140,9 +171,9 @@ export function matchChoicesWithCutoffs(
       choiceNo: choice.choiceNo,
       rawInstitute: choice.rawInstitute,
       rawProgram: choice.rawProgram,
-      matchedVacancy: highestScore >= 0.3 ? bestMatch : undefined,
+      matchedVacancy: highestScore >= 0.45 ? bestMatch : undefined,
       cutoff,
-      matchScore: highestScore,
+      matchScore: highestScore >= 0 ? highestScore : 0,
       status,
     };
   });
